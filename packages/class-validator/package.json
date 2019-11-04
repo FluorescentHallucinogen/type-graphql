@@ -11,20 +11,20 @@
   "peerDependencies": {
     "@typegraphql/core": "*",
     "@types/node": "*",
-    "class-validator": "^0.10.0"
+    "class-validator": "^0.11.0"
   },
   "dependencies": {
     "tslib": "^1.10.0"
   },
   "devDependencies": {
     "@typegraphql/core": "1.0.0-next.0",
-    "@types/node": "^12.7.5",
-    "@zerollup/ts-transform-paths": "^1.7.3",
-    "class-validator": "^0.10.0",
+    "@types/node": "^12.12.14",
+    "@zerollup/ts-transform-paths": "^1.7.8",
+    "class-validator": "^0.11.0",
     "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
-    "ttypescript": "^1.5.7",
-    "typescript": "^3.6.3"
+    "ts-jest": "^24.2.0",
+    "ttypescript": "~1.5.8",
+    "typescript": "~3.7.3"
   },
   "license": "MIT",
   "engines": {
