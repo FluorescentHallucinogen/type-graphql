@@ -1,9 +1,13 @@
 import ClassType from "@src/interfaces/ClassType";
-import { TargetMetadata } from "@src/metadata/definitions/common";
+import {
+  TargetMetadata,
+  NameMetadata,
+  DescriptionMetadata,
+} from "@src/metadata/definitions/common";
 
-export default interface ObjectTypeMetadata extends TargetMetadata {
+export default interface ObjectTypeMetadata
+  extends TargetMetadata,
+    NameMetadata,
+    DescriptionMetadata {
   implementedInterfaceClasses: ClassType[];
-  // TODO: extract to common metadata interfaces
-  name: string;
-  description: string | undefined;
 }
