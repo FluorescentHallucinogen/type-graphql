@@ -1,4 +1,4 @@
-name: Node CI
+name: TypeGraphQL vNext monorepo
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.3, 10.x, 11.x, 12.x]
+        node-version: [10.3, 10.x, 11.x, 12.x, 13.x]
 
     steps:
       - uses: actions/checkout@v1
@@ -25,6 +25,11 @@ jobs:
         run: |
           npm install
           npm run bootstrap
+
+      - name: Check codebase
+        run: |
+          npm run format:check
+          npm run lint:check
 
       - name: Build packages
         run: npm run build
