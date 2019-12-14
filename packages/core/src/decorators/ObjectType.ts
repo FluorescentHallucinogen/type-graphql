@@ -1,4 +1,4 @@
-import MetadataStorage from "@src/metadata/MetadataStorage";
+import MetadataStorage from "@src/metadata/storage/MetadataStorage";
 import TypedClassDecorator from "@src/interfaces/TypedClassDecorator";
 import ClassType from "@src/interfaces/ClassType";
 import { Nameable, Descriptionable } from "@src/decorators/types";
@@ -18,7 +18,7 @@ export default function ObjectType(
   return target => {
     MetadataStorage.get().collectObjectTypeMetadata({
       target,
-      name: options.schemaName ?? target.name,
+      schemaName: options.schemaName ?? target.name,
       description: options.description,
       implementedInterfaceClasses,
     });

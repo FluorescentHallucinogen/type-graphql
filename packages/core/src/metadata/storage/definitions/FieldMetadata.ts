@@ -1,15 +1,15 @@
 import {
   TargetMetadata,
-  NameMetadata,
+  SchemaNameMetadata,
   DescriptionMetadata,
   PropertyMetadata,
-} from "@src/metadata/definitions/common";
+} from "@src/metadata/storage/definitions/common";
 import ExplicitTypeFn from "@src/interfaces/ExplicitTypeFn";
 
 export default interface FieldMetadata
   extends TargetMetadata,
     PropertyMetadata,
-    NameMetadata,
+    SchemaNameMetadata,
     DescriptionMetadata {
   explicitTypeFn: ExplicitTypeFn | undefined;
 }

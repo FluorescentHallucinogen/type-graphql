@@ -8,8 +8,8 @@ export interface PropertyMetadata {
   propertyKey: string | symbol;
 }
 
-export interface NameMetadata {
-  name: string;
+export interface SchemaNameMetadata {
+  schemaName: string;
 }
 
 export interface DescriptionMetadata {

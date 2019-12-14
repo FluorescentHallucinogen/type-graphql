@@ -1,13 +1,13 @@
 import ClassType from "@src/interfaces/ClassType";
 import {
   TargetMetadata,
-  NameMetadata,
+  SchemaNameMetadata,
   DescriptionMetadata,
-} from "@src/metadata/definitions/common";
+} from "@src/metadata/storage/definitions/common";
 
 export default interface ObjectTypeMetadata
   extends TargetMetadata,
-    NameMetadata,
+    SchemaNameMetadata,
     DescriptionMetadata {
   implementedInterfaceClasses: ClassType[];
 }

@@ -1,5 +1,6 @@
-import ObjectTypeMetadata from "@src/metadata/definitions/ObjectTypeMetadata";
-import FieldMetadata from "@src/metadata/definitions/FieldMetadata";
+import ObjectTypeMetadata from "@src/metadata/storage/definitions/ObjectTypeMetadata";
+import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
+import ClassType from "@src/interfaces/ClassType";
 
 export default class MetadataStorage {
   protected objectTypesMetadata: ObjectTypeMetadata[] = [];
@@ -17,7 +18,14 @@ export default class MetadataStorage {
   collectObjectTypeMetadata(metadata: ObjectTypeMetadata): void {
     this.objectTypesMetadata.push(metadata);
   }
+  findObjectTypeMetadata(typeClass: ClassType): ObjectTypeMetadata | undefined {
+    return this.objectTypesMetadata.find(it => it.target === typeClass);
+  }
+
   collectFieldMetadata(metadata: FieldMetadata): void {
     this.fieldsMetadata.push(metadata);
+  }
+  findFieldMetadata(typeClass: ClassType): FieldMetadata[] {
+    return this.fieldsMetadata.filter(it => it.target === typeClass);
   }
 }

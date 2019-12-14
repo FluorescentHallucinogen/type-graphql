@@ -1,5 +1,5 @@
 import TypedPropertyDecorator from "@src/interfaces/TypedPropertyDecorator";
-import MetadataStorage from "@src/metadata/MetadataStorage";
+import MetadataStorage from "@src/metadata/storage/MetadataStorage";
 import ExplicitTypeFn from "@src/interfaces/ExplicitTypeFn";
 import {
   parseDecoratorParameters,
@@ -27,7 +27,7 @@ export default function Field(
     MetadataStorage.get().collectFieldMetadata({
       target: prototype.constructor as ClassType, // FIXME: fix typed decorator signature
       propertyKey,
-      name: options.schemaName ?? parseStringOrSymbol(propertyKey),
+      schemaName: options.schemaName ?? parseStringOrSymbol(propertyKey),
       description: options.description,
       explicitTypeFn,
     });

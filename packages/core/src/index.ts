@@ -1,5 +1,5 @@
-import foo from "@src/foo";
-import bar from "@src/bar";
-import { ensureInstalledCorrectTypeGraphQLPackagesVersion } from "@src/utils";
-
-export { foo, bar, ensureInstalledCorrectTypeGraphQLPackagesVersion };
+export { default as foo } from "@src/foo";
+export { default as bar } from "@src/bar";
+export { ensureInstalledCorrectTypeGraphQLPackagesVersion } from "@src/utils";
+export * from "@src/decorators";
+export * from "@src/schema";
