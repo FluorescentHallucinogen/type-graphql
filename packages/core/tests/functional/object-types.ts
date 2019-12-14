@@ -4,7 +4,7 @@ import { printType } from "graphql";
 import { buildSchema, ObjectType, Field } from "@typegraphql/core";
 
 describe("Object types", () => {
-  it("should generate proper schema signature for base object type", async () => {
+  it("should generate schema signature with fields for basic object type", async () => {
     @ObjectType()
     class SampleObject {
       @Field(_type => String)

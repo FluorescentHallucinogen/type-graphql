@@ -1,16 +1,19 @@
 import BuildSchemaOptions from "@src/schema/BuildSchemaOptions";
 import ClassType from "@src/interfaces/ClassType";
 import MetadataStorage from "@src/metadata/storage/MetadataStorage";
-import BuildedObjectTypeMetadata from "@src/metadata/builder/definitions/ObjectTypeMetadata";
+import BuiltObjectTypeMetadata from "@src/metadata/builder/definitions/ObjectTypeMetadata";
+import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata";
+import { getTypeMetadata } from "@src/metadata/builder/type-reflection";
 
 export default class MetadataBuilder {
   private readonly typeMetadataByClassMap = new Map<
     ClassType,
-    BuildedObjectTypeMetadata
+    BuiltObjectTypeMetadata
   >();
+
   constructor(protected readonly buildSchemaOptions: BuildSchemaOptions) {}
 
-  getTypeMetadataByClass(typeClass: ClassType): BuildedObjectTypeMetadata {
+  getTypeMetadataByClass(typeClass: ClassType): BuiltObjectTypeMetadata {
     if (this.typeMetadataByClassMap.has(typeClass)) {
       return this.typeMetadataByClassMap.get(typeClass)!;
     }
@@ -29,12 +32,17 @@ export default class MetadataBuilder {
       throw new Error("objectTypeFieldsMetadata.length === 0");
     }
 
-    const buildedObjectTypeMetadata: BuildedObjectTypeMetadata = {
+    const builtObjectTypeMetadata: BuiltObjectTypeMetadata = {
       ...objectTypeMetadata,
-      fields: objectTypeFieldsMetadata,
+      fields: objectTypeFieldsMetadata.map<BuiltFieldMetadata>(
+        fieldMetadata => ({
+          ...fieldMetadata,
+          type: getTypeMetadata(fieldMetadata),
+        }),
+      ),
     };
 
-    this.typeMetadataByClassMap.set(typeClass, buildedObjectTypeMetadata);
-    return buildedObjectTypeMetadata;
+    this.typeMetadataByClassMap.set(typeClass, builtObjectTypeMetadata);
+    return builtObjectTypeMetadata;
   }
 }

@@ -1,6 +1,6 @@
 import ObjectTypeMetadata from "@src/metadata/storage/definitions/ObjectTypeMetadata";
-import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
+import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata";
 
-export default interface BuildedObjectTypeMetadata extends ObjectTypeMetadata {
-  fields: FieldMetadata[];
+export default interface BuiltObjectTypeMetadata extends ObjectTypeMetadata {
+  fields: BuiltFieldMetadata[];
 }

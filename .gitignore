@@ -4,7 +4,7 @@
 # log files
 **/*.log
 
-# builded artifacts
+# built artifacts
 **/build
 **/dist
 **/lib

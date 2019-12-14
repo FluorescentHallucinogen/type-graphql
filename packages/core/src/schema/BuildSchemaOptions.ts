@@ -1,8 +1,9 @@
 import ClassType from "@src/interfaces/ClassType";
+import NonEmptyArray from "@src/interfaces/NonEmptyArray";
 
 export default interface BuildSchemaOptions {
   /**
    * Array of orphaned type classes that are not used explicitly in GraphQL types definitions
    */
-  orphanedTypes: ClassType[];
+  orphanedTypes: NonEmptyArray<ClassType>;
 }
