@@ -37,7 +37,10 @@ export default class MetadataBuilder {
       fields: objectTypeFieldsMetadata.map<BuiltFieldMetadata>(
         fieldMetadata => ({
           ...fieldMetadata,
-          type: getTypeMetadata(fieldMetadata),
+          type: getTypeMetadata(
+            fieldMetadata,
+            this.buildSchemaOptions.defaultNullable,
+          ),
         }),
       ),
     };

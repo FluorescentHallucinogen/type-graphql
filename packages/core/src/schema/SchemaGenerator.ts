@@ -9,14 +9,13 @@ import {
 } from "graphql";
 import BuildSchemaOptions from "@src/schema/BuildSchemaOptions";
 import ClassType from "@src/interfaces/ClassType";
-import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
 import {
   wrapWithModifiers,
   convertTypeIfScalar,
 } from "@src/schema/type-converting";
 import TypeValue from "@src/interfaces/TypeValue";
-import { getTypeMetadata } from "@src/metadata/builder/type-reflection";
 import { TypeMetadata } from "@src/metadata/builder/definitions/TypeMetadata";
+import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata";
 
 export default class SchemaGenerator {
   private readonly typeByClassMap = new Map<ClassType, GraphQLObjectType>();
@@ -72,12 +71,12 @@ export default class SchemaGenerator {
   }
 
   private getGraphQLFields(
-    fields: FieldMetadata[],
+    fields: BuiltFieldMetadata[],
   ): GraphQLFieldConfigMap<unknown, unknown, unknown> {
     return fields.reduce<GraphQLFieldConfigMap<unknown, unknown, unknown>>(
       (fields, metadata) => {
         fields[metadata.schemaName] = {
-          type: this.getGraphQLOutputType(getTypeMetadata(metadata)),
+          type: this.getGraphQLOutputType(metadata.type),
         };
         return fields;
       },

@@ -27,11 +27,17 @@ export function convertTypeIfScalar(
   }
 }
 
+type WrappedGraphQLType<TGraphQLType extends GraphQLNullableType> =
+  | TGraphQLType
+  | GraphQLNonNull<TGraphQLType>;
+
 export function wrapWithModifiers<TGraphQLType extends GraphQLNullableType>(
   baseType: TGraphQLType,
   modifiers: TypeModifiers,
-): TGraphQLType | GraphQLNonNull<TGraphQLType> {
-  // TODO: use modifiers for list and nullable features
-  modifiers;
-  return new GraphQLNonNull(baseType) as GraphQLNonNull<TGraphQLType>;
+): WrappedGraphQLType<TGraphQLType> {
+  let graphQLType: WrappedGraphQLType<TGraphQLType> = baseType;
+  if (modifiers.nullable === false) {
+    graphQLType = new GraphQLNonNull(baseType) as GraphQLNonNull<TGraphQLType>;
+  }
+  return graphQLType;
 }

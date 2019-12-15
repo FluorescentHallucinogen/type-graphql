@@ -15,3 +15,7 @@ export interface SchemaNameMetadata {
 export interface DescriptionMetadata {
   description: string | undefined;
 }
+
+export interface NullableMetadata {
+  nullable: boolean | undefined;
+}

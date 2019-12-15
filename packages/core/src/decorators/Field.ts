@@ -5,10 +5,10 @@ import {
   parseDecoratorParameters,
   parseStringOrSymbol,
 } from "@src/decorators/helpers";
-import { Nameable, Descriptionable } from "@src/decorators/types";
+import { Nameable, Descriptionable, Nullable } from "@src/decorators/types";
 import ClassType from "@src/interfaces/ClassType";
 
-export interface FieldOptions extends Nameable, Descriptionable {}
+export interface FieldOptions extends Nameable, Descriptionable, Nullable {}
 
 export default function Field(options?: FieldOptions): TypedPropertyDecorator;
 export default function Field(
@@ -29,6 +29,7 @@ export default function Field(
       propertyKey,
       schemaName: options.schemaName ?? parseStringOrSymbol(propertyKey),
       description: options.description,
+      nullable: options.nullable,
       explicitTypeFn,
     });
   };

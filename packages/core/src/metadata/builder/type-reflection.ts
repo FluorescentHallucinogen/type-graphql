@@ -26,7 +26,10 @@ function getReflectedType(
   }
 }
 
-export function getTypeMetadata(fieldMetadata: FieldMetadata): TypeMetadata {
+export function getTypeMetadata(
+  fieldMetadata: FieldMetadata,
+  defaultNullable: boolean | undefined,
+): TypeMetadata {
   const explicitType = fieldMetadata.explicitTypeFn?.();
   const reflectedType = getReflectedType("property", fieldMetadata);
   if (
@@ -39,9 +42,9 @@ export function getTypeMetadata(fieldMetadata: FieldMetadata): TypeMetadata {
   return {
     value: (explicitType ?? reflectedType) as TypeValue,
     modifiers: {
-      // TODO: read from metadata and typeValue
+      // TODO: read from typeValue
       isArray: false,
-      nullable: false,
+      nullable: fieldMetadata.nullable ?? defaultNullable ?? false,
     },
   };
 }

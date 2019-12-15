@@ -6,4 +6,8 @@ export default interface BuildSchemaOptions {
    * Array of orphaned type classes that are not used explicitly in GraphQL types definitions
    */
   orphanedTypes: NonEmptyArray<ClassType>;
+  /**
+   * Default value for type decorators, like `@Field({ nullable: true })`
+   */
+  defaultNullable?: boolean;
 }
