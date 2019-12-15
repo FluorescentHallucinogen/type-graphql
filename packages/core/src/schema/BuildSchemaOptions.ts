@@ -7,7 +7,7 @@ export default interface BuildSchemaOptions {
    */
   orphanedTypes: NonEmptyArray<ClassType>;
   /**
-   * Default value for type decorators, like `@Field({ nullable: true })`
+   * Default `nullable` value for type decorators, like `@Field({ nullable: true })`
    */
-  defaultNullable?: boolean;
+  nullableByDefault?: boolean;
 }

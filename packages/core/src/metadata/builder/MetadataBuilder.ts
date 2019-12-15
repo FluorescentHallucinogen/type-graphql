@@ -39,7 +39,7 @@ export default class MetadataBuilder {
           ...fieldMetadata,
           type: getTypeMetadata(
             fieldMetadata,
-            this.buildSchemaOptions.defaultNullable,
+            this.buildSchemaOptions.nullableByDefault,
           ),
         }),
       ),

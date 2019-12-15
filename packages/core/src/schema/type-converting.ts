@@ -5,6 +5,7 @@ import {
   GraphQLFloat,
   GraphQLNonNull,
   GraphQLNullableType,
+  GraphQLList,
 } from "graphql";
 import { TypeModifiers } from "@src/metadata/builder/definitions/TypeMetadata";
 
@@ -29,15 +30,26 @@ export function convertTypeIfScalar(
 
 type WrappedGraphQLType<TGraphQLType extends GraphQLNullableType> =
   | TGraphQLType
-  | GraphQLNonNull<TGraphQLType>;
+  | GraphQLNonNull<TGraphQLType>
+  | GraphQLList<TGraphQLType>;
 
 export function wrapWithModifiers<TGraphQLType extends GraphQLNullableType>(
   baseType: TGraphQLType,
   modifiers: TypeModifiers,
 ): WrappedGraphQLType<TGraphQLType> {
   let graphQLType: WrappedGraphQLType<TGraphQLType> = baseType;
+  if (modifiers.listDepth > 0) {
+    graphQLType = new GraphQLList(
+      wrapWithModifiers(graphQLType, {
+        ...modifiers,
+        listDepth: modifiers.listDepth - 1,
+      }),
+    ) as GraphQLList<TGraphQLType>;
+  }
   if (modifiers.nullable === false) {
-    graphQLType = new GraphQLNonNull(baseType) as GraphQLNonNull<TGraphQLType>;
+    graphQLType = new GraphQLNonNull(graphQLType) as GraphQLNonNull<
+      TGraphQLType
+    >;
   }
   return graphQLType;
 }
