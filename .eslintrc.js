@@ -66,7 +66,7 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-magic-numbers": [
       "error",
-      { ignoreNumericLiteralTypes: true, ignore: [0, 1] },
+      { ignoreNumericLiteralTypes: true, ignore: [-1, 0, 1] },
     ],
     "@typescript-eslint/no-misused-promises": "error",
     "@typescript-eslint/no-parameter-properties": "off",
@@ -102,4 +102,13 @@ module.exports = {
     "@typescript-eslint/unbound-method": "error",
     "@typescript-eslint/unified-signatures": "error",
   },
+  overrides: [
+    {
+      files: ["**/tests/**/*"],
+      rules: {
+        "jest/no-try-expect": "off",
+        "@typescript-eslint/no-magic-numbers": "off",
+      },
+    },
+  ],
 };
