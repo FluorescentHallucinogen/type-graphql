@@ -3,26 +3,7 @@ import { printType } from "graphql";
 
 import { buildSchema, ObjectType, Field } from "@typegraphql/core";
 
-describe("Object types", () => {
-  it("should generate schema signature with fields for basic object type", async () => {
-    @ObjectType()
-    class SampleObject {
-      @Field(_type => String)
-      sampleField!: string;
-    }
-
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
-
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
-      "type SampleObject {
-        sampleField: String!
-      }"
-    `);
-  });
-
+describe("Object types > options", () => {
   it("should correctly generate type name using `schemaName` decorator option", async () => {
     @ObjectType({ schemaName: "SampleObjectSchemaName" })
     class SampleObject {

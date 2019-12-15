@@ -1,6 +1,6 @@
 import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
-import { TypeMetadata } from "@src/metadata/builder/definitions/TypeMetadata";
+import { BuildedTypeMetadata } from "@src/metadata/builder/definitions/common";
 
-export default interface BuiltFieldMetadata extends FieldMetadata {
-  type: TypeMetadata;
-}
+export default interface BuiltFieldMetadata
+  extends FieldMetadata,
+    BuildedTypeMetadata {}

@@ -6,6 +6,7 @@ import {
 } from "@src/metadata/storage/definitions/common";
 import TypeValue from "@src/interfaces/TypeValue";
 import { ExplicitTypeFnValue } from "@src/interfaces/ExplicitTypeFn";
+import MissingExplicitTypeError from "@src/errors/MissingExplicitTypeError";
 
 const bannedReflectedTypes: Function[] = [Promise, Array, Object, Function];
 
@@ -28,33 +29,34 @@ function getReflectedType(
 }
 
 function unwrapExplicitType(
-  explicitType: ExplicitTypeFnValue | undefined,
-): { explicitInnerType: TypeValue | undefined; listDepth: number } {
+  explicitTypeFromFn: ExplicitTypeFnValue | undefined,
+): { explicitType: TypeValue | undefined; listDepth: number } {
   let listDepth = 0;
-  let currentTupleItem = explicitType;
+  let currentTupleItem = explicitTypeFromFn;
   while (Array.isArray(currentTupleItem)) {
     listDepth++;
     currentTupleItem = currentTupleItem[0];
   }
-  return { explicitInnerType: currentTupleItem, listDepth };
+  return { explicitType: currentTupleItem, listDepth };
 }
 
 export function getTypeMetadata(
   fieldMetadata: FieldMetadata,
   nullableByDefault: boolean | undefined,
 ): TypeMetadata {
-  const explicitType = fieldMetadata.explicitTypeFn?.();
-  const { explicitInnerType, listDepth } = unwrapExplicitType(explicitType);
+  const { explicitType, listDepth } = unwrapExplicitType(
+    fieldMetadata.explicitTypeFn?.(),
+  );
   const reflectedType = getReflectedType("property", fieldMetadata);
   if (
     !explicitType &&
     (!reflectedType || bannedReflectedTypes.includes(reflectedType))
   ) {
-    throw new Error("getTypeMetadata !typeValue");
+    throw new MissingExplicitTypeError(fieldMetadata, reflectedType);
   }
 
   return {
-    value: (explicitInnerType ?? explicitType ?? reflectedType) as TypeValue,
+    value: (explicitType ?? reflectedType) as TypeValue,
     modifiers: {
       listDepth,
       nullable: fieldMetadata.nullable ?? nullableByDefault ?? false,

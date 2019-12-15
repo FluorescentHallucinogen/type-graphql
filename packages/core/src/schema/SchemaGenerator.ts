@@ -14,8 +14,13 @@ import {
   convertTypeIfScalar,
 } from "@src/schema/type-converting";
 import TypeValue from "@src/interfaces/TypeValue";
-import { TypeMetadata } from "@src/metadata/builder/definitions/TypeMetadata";
 import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata";
+import { BuildedTypeMetadata } from "@src/metadata/builder/definitions/common";
+import CannotDetermineOutputTypeError from "@src/errors/CannotDetermineOutputTypeError";
+import {
+  TargetMetadata,
+  PropertyMetadata,
+} from "@src/metadata/storage/definitions/common";
 
 export default class SchemaGenerator {
   private readonly typeByClassMap = new Map<ClassType, GraphQLObjectType>();
@@ -76,7 +81,7 @@ export default class SchemaGenerator {
     return fields.reduce<GraphQLFieldConfigMap<unknown, unknown, unknown>>(
       (fields, metadata) => {
         fields[metadata.schemaName] = {
-          type: this.getGraphQLOutputType(metadata.type),
+          type: this.getGraphQLOutputType(metadata),
         };
         return fields;
       },
@@ -84,14 +89,16 @@ export default class SchemaGenerator {
     );
   }
 
-  private getGraphQLOutputType(typeMetadata: TypeMetadata): GraphQLOutputType {
-    for (const foundType of this.findGraphQLOutputType(typeMetadata.value)) {
+  private getGraphQLOutputType(
+    metadata: TargetMetadata & PropertyMetadata & BuildedTypeMetadata,
+  ): GraphQLOutputType {
+    for (const foundType of this.findGraphQLOutputType(metadata.type.value)) {
       if (foundType) {
-        return wrapWithModifiers(foundType, typeMetadata.modifiers);
+        return wrapWithModifiers(foundType, metadata.type.modifiers);
       }
     }
 
-    throw new Error(`getGraphQLOutputType`);
+    throw new CannotDetermineOutputTypeError(metadata);
   }
 
   private *findGraphQLOutputType(
