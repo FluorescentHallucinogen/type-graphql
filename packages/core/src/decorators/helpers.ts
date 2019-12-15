@@ -22,15 +22,20 @@ export function parseDecoratorParameters<TOptions extends object>(
   }
 }
 
+const SYMBOL_DESCRIPTION_START_INDEX = 7;
+
 export function parseStringOrSymbol(stringOrSymbol: string | symbol): string {
-  if (typeof stringOrSymbol === "symbol") {
-    // TODO: use `Symbol.prototype.description`
-    /* eslint-disable-next-line */
-    const symbolDescription = stringOrSymbol.toString().slice(7, -1);
-    if (!symbolDescription) {
-      throw new MissingSymbolKeyDescriptionError();
-    }
+  if (typeof stringOrSymbol === "string") {
+    return stringOrSymbol;
+  }
+
+  // TODO: use `Symbol.prototype.description`
+  const symbolDescription = stringOrSymbol
+    .toString()
+    .slice(SYMBOL_DESCRIPTION_START_INDEX, -1);
+  if (symbolDescription) {
     return symbolDescription;
   }
-  return stringOrSymbol;
+
+  throw new MissingSymbolKeyDescriptionError();
 }
