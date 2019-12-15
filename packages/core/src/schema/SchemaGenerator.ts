@@ -15,6 +15,8 @@ import {
   convertTypeIfScalar,
 } from "@src/schema/type-converting";
 import TypeValue from "@src/interfaces/TypeValue";
+import { getTypeMetadata } from "@src/metadata/builder/type-reflection";
+import { TypeMetadata } from "@src/metadata/builder/definitions/TypeMetadata";
 
 export default class SchemaGenerator {
   private readonly typeByClassMap = new Map<ClassType, GraphQLObjectType>();
@@ -75,10 +77,7 @@ export default class SchemaGenerator {
     return fields.reduce<GraphQLFieldConfigMap<unknown, unknown, unknown>>(
       (fields, metadata) => {
         fields[metadata.schemaName] = {
-          type: this.getGraphQLOutputType(
-            // TODO: extract type info from explicit fn
-            metadata.explicitTypeFn!() as TypeValue,
-          ),
+          type: this.getGraphQLOutputType(getTypeMetadata(metadata)),
         };
         return fields;
       },
@@ -86,10 +85,10 @@ export default class SchemaGenerator {
     );
   }
 
-  private getGraphQLOutputType(typeValue: TypeValue): GraphQLOutputType {
-    for (const foundType of this.findGraphQLOutputType(typeValue)) {
+  private getGraphQLOutputType(typeMetadata: TypeMetadata): GraphQLOutputType {
+    for (const foundType of this.findGraphQLOutputType(typeMetadata.value)) {
       if (foundType) {
-        return wrapWithModifiers(foundType);
+        return wrapWithModifiers(foundType, typeMetadata.modifiers);
       }
     }
 

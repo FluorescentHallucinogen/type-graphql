@@ -4,83 +4,144 @@ import { printType, GraphQLScalarType } from "graphql";
 import { buildSchema, ObjectType, Field } from "@typegraphql/core";
 
 describe("Fields types", () => {
-  it("should generate proper field signature in schema for explicit String type", async () => {
-    @ObjectType()
-    class SampleObject {
-      @Field(_type => String)
-      sampleField!: string;
-    }
+  describe("explicitTypeFn", () => {
+    it("should generate proper field signature in schema for explicit String type", async () => {
+      @ObjectType()
+      class SampleObject {
+        @Field(_type => String)
+        sampleField!: string;
+      }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
+
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: String!
+        }"
+      `);
     });
-    const sampleObjectType = schema.getType("SampleObject")!;
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
-      "type SampleObject {
-        sampleField: String!
-      }"
-    `);
+    it("should generate proper field signature in schema for explicit Number type", async () => {
+      @ObjectType()
+      class SampleObject {
+        @Field(_type => Number)
+        sampleField!: number;
+      }
+
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
+
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: Float!
+        }"
+      `);
+    });
+
+    it("should generate proper field signature in schema for explicit Boolean type", async () => {
+      @ObjectType()
+      class SampleObject {
+        @Field(_type => Boolean)
+        sampleField!: boolean;
+      }
+
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
+
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: Boolean!
+        }"
+      `);
+    });
+
+    it("should generate proper field signature in schema for explicit custom scalar type", async () => {
+      const CustomScalar = new GraphQLScalarType({
+        name: "CustomScalar",
+        serialize: it => it,
+      });
+      @ObjectType()
+      class SampleObject {
+        @Field(_type => CustomScalar)
+        sampleField!: string;
+      }
+
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
+
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: CustomScalar!
+        }"
+      `);
+    });
   });
 
-  it("should generate proper field signature in schema for explicit Number type", async () => {
-    @ObjectType()
-    class SampleObject {
-      @Field(_type => Number)
-      sampleField!: number;
-    }
+  describe("reflection", () => {
+    it("should generate proper field signature in schema for string property type", async () => {
+      @ObjectType()
+      class SampleObject {
+        @Field()
+        sampleField!: string;
+      }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
+
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: String!
+        }"
+      `);
     });
-    const sampleObjectType = schema.getType("SampleObject")!;
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
-      "type SampleObject {
-        sampleField: Float!
-      }"
-    `);
-  });
+    it("should generate proper field signature in schema for number property type", async () => {
+      @ObjectType()
+      class SampleObject {
+        @Field()
+        sampleField!: number;
+      }
 
-  it("should generate proper field signature in schema for explicit Boolean type", async () => {
-    @ObjectType()
-    class SampleObject {
-      @Field(_type => Boolean)
-      sampleField!: boolean;
-    }
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: Float!
+        }"
+      `);
     });
-    const sampleObjectType = schema.getType("SampleObject")!;
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
-      "type SampleObject {
-        sampleField: Boolean!
-      }"
-    `);
-  });
+    it("should generate proper field signature in schema for boolean property type", async () => {
+      @ObjectType()
+      class SampleObject {
+        @Field()
+        sampleField!: boolean;
+      }
 
-  it("should generate proper field signature in schema for explicit custom scalar type", async () => {
-    const CustomScalar = new GraphQLScalarType({
-      name: "CustomScalar",
-      serialize: it => it,
+      const schema = await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+      const sampleObjectType = schema.getType("SampleObject")!;
+
+      expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+        "type SampleObject {
+          sampleField: Boolean!
+        }"
+      `);
     });
-    @ObjectType()
-    class SampleObject {
-      @Field(_type => CustomScalar)
-      sampleField!: string;
-    }
-
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
-
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
-      "type SampleObject {
-        sampleField: CustomScalar!
-      }"
-    `);
   });
 });

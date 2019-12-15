@@ -1,9 +1,11 @@
 import TypeValue from "@src/interfaces/TypeValue";
 
-export default interface TypeMetadata {
+export interface TypeModifiers {
+  nullable: boolean;
+  isArray: boolean;
+}
+
+export interface TypeMetadata {
   value: TypeValue;
-  modifiers: {
-    nullable: boolean;
-    isArray: boolean;
-  };
+  modifiers: TypeModifiers;
 }

@@ -6,6 +6,7 @@ import {
   GraphQLNonNull,
   GraphQLNullableType,
 } from "graphql";
+import { TypeModifiers } from "@src/metadata/builder/definitions/TypeMetadata";
 
 export function convertTypeIfScalar(
   type: unknown,
@@ -28,6 +29,9 @@ export function convertTypeIfScalar(
 
 export function wrapWithModifiers<TGraphQLType extends GraphQLNullableType>(
   baseType: TGraphQLType,
+  modifiers: TypeModifiers,
 ): TGraphQLType | GraphQLNonNull<TGraphQLType> {
+  // TODO: use modifiers for list and nullable features
+  modifiers;
   return new GraphQLNonNull(baseType) as GraphQLNonNull<TGraphQLType>;
 }
