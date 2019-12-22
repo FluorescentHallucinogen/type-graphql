@@ -37,6 +37,7 @@ describe("@Field options", () => {
 
     expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
       "type SampleObject {
+        \\"\\"\\"Field description\\"\\"\\"
         sampleField: String!
       }"
     `);

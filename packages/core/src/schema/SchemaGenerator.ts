@@ -82,6 +82,7 @@ export default class SchemaGenerator {
       (fields, metadata) => {
         fields[metadata.schemaName] = {
           type: this.getGraphQLOutputType(metadata),
+          description: metadata.description,
         };
         return fields;
       },
