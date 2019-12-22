@@ -8,7 +8,7 @@ import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
 import MissingFieldsError from "@src/errors/MissingFieldsError";
 
 export default class MetadataBuilder {
-  private readonly typeMetadataByClassMap = new Map<
+  private readonly typeMetadataByClassMap = new WeakMap<
     ClassType,
     BuiltObjectTypeMetadata
   >();
@@ -30,7 +30,7 @@ export default class MetadataBuilder {
     const objectTypeFieldsMetadata = MetadataStorage.get().findFieldMetadata(
       typeClass,
     );
-    if (objectTypeFieldsMetadata.length === 0) {
+    if (!objectTypeFieldsMetadata || objectTypeFieldsMetadata.length === 0) {
       throw new MissingFieldsError(typeClass);
     }
 

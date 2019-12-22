@@ -3,8 +3,11 @@ import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
 import ClassType from "@src/interfaces/ClassType";
 
 export default class MetadataStorage {
-  protected objectTypesMetadata: ObjectTypeMetadata[] = [];
-  protected fieldsMetadata: FieldMetadata[] = [];
+  protected objectTypesMetadataMap = new WeakMap<
+    ClassType,
+    ObjectTypeMetadata
+  >();
+  protected fieldsMetadataMap = new WeakMap<ClassType, FieldMetadata[]>();
 
   protected constructor() {}
 
@@ -16,16 +19,19 @@ export default class MetadataStorage {
   }
 
   collectObjectTypeMetadata(metadata: ObjectTypeMetadata): void {
-    this.objectTypesMetadata.push(metadata);
+    this.objectTypesMetadataMap.set(metadata.target, metadata);
   }
   findObjectTypeMetadata(typeClass: ClassType): ObjectTypeMetadata | undefined {
-    return this.objectTypesMetadata.find(it => it.target === typeClass);
+    return this.objectTypesMetadataMap.get(typeClass);
   }
 
   collectFieldMetadata(metadata: FieldMetadata): void {
-    this.fieldsMetadata.push(metadata);
+    this.fieldsMetadataMap.set(metadata.target, [
+      ...(this.fieldsMetadataMap.get(metadata.target) ?? []),
+      metadata,
+    ]);
   }
-  findFieldMetadata(typeClass: ClassType): FieldMetadata[] {
-    return this.fieldsMetadata.filter(it => it.target === typeClass);
+  findFieldMetadata(typeClass: ClassType): FieldMetadata[] | undefined {
+    return this.fieldsMetadataMap.get(typeClass);
   }
 }

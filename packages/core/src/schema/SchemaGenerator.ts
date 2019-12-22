@@ -23,7 +23,7 @@ import {
 } from "@src/metadata/storage/definitions/common";
 
 export default class SchemaGenerator {
-  private readonly typeByClassMap = new Map<ClassType, GraphQLObjectType>();
+  private readonly typeByClassMap = new WeakMap<ClassType, GraphQLObjectType>();
   private readonly metadataBuilder: MetadataBuilder;
 
   constructor(private readonly buildSchemaOptions: BuildSchemaOptions) {
