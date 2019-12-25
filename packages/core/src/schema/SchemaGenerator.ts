@@ -93,7 +93,9 @@ export default class SchemaGenerator {
   private getGraphQLOutputType(
     metadata: TargetMetadata & PropertyMetadata & BuildedTypeMetadata,
   ): GraphQLOutputType {
-    for (const foundType of this.findGraphQLOutputType(metadata.type.value)) {
+    for (const foundType of this.searchForGraphQLOutputType(
+      metadata.type.value,
+    )) {
       if (foundType) {
         return wrapWithModifiers(foundType, metadata.type.modifiers);
       }
@@ -102,12 +104,15 @@ export default class SchemaGenerator {
     throw new CannotDetermineOutputTypeError(metadata);
   }
 
-  private *findGraphQLOutputType(
+  private *searchForGraphQLOutputType(
     typeValue: TypeValue,
   ): Generator<GraphQLOutputType | undefined, void, void> {
     yield convertTypeIfScalar(typeValue);
     if (typeof typeValue === "function") {
       yield this.findTypeByClass(typeValue as ClassType);
+    }
+    if (typeValue instanceof GraphQLObjectType) {
+      yield typeValue;
     }
   }
 }

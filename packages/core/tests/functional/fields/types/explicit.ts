@@ -98,27 +98,4 @@ describe("Fields types > explicitTypeFn", () => {
       }"
     `);
   });
-
-  it("should generate proper field signature in schema for explicit custom scalar type", async () => {
-    const CustomScalar = new GraphQLScalarType({
-      name: "CustomScalar",
-      serialize: it => it,
-    });
-    @ObjectType()
-    class SampleObject {
-      @Field(_type => CustomScalar)
-      sampleField!: string;
-    }
-
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
-
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
-      "type SampleObject {
-        sampleField: CustomScalar!
-      }"
-    `);
-  });
 });
