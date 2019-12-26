@@ -1,3 +1,5 @@
+import createDebug from "debug";
+
 import MetadataBuilder from "@src/metadata/builder/MetadataBuilder";
 import {
   GraphQLSchema,
@@ -22,11 +24,14 @@ import {
   PropertyMetadata,
 } from "@src/metadata/storage/definitions/common";
 
+const debug = createDebug("@typegraphql/core:SchemaGenerator");
+
 export default class SchemaGenerator {
   private readonly typeByClassMap = new WeakMap<ClassType, GraphQLObjectType>();
   private readonly metadataBuilder: MetadataBuilder;
 
   constructor(private readonly buildSchemaOptions: BuildSchemaOptions) {
+    debug("created SchemaGenerator instance", buildSchemaOptions);
     this.metadataBuilder = new MetadataBuilder(buildSchemaOptions);
   }
 

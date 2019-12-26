@@ -1,3 +1,5 @@
+import createDebug from "debug";
+
 import BuildSchemaOptions from "@src/schema/BuildSchemaOptions";
 import ClassType from "@src/interfaces/ClassType";
 import MetadataStorage from "@src/metadata/storage/MetadataStorage";
@@ -7,13 +9,17 @@ import { getTypeMetadata } from "@src/metadata/builder/type-reflection";
 import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
 import MissingFieldsError from "@src/errors/MissingFieldsError";
 
+const debug = createDebug("@typegraphql/core:MetadataBuilder");
+
 export default class MetadataBuilder {
   private readonly typeMetadataByClassMap = new WeakMap<
     ClassType,
     BuiltObjectTypeMetadata
   >();
 
-  constructor(protected readonly buildSchemaOptions: BuildSchemaOptions) {}
+  constructor(protected readonly buildSchemaOptions: BuildSchemaOptions) {
+    debug("created MetadataBuilder instance", buildSchemaOptions);
+  }
 
   getTypeMetadataByClass(typeClass: ClassType): BuiltObjectTypeMetadata {
     if (this.typeMetadataByClassMap.has(typeClass)) {

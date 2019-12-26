@@ -1,6 +1,10 @@
+import createDebug from "debug";
+
 import ObjectTypeMetadata from "@src/metadata/storage/definitions/ObjectTypeMetadata";
 import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
 import ClassType from "@src/interfaces/ClassType";
+
+const debug = createDebug("@typegraphql/core:MetadataStorage");
 
 export default class MetadataStorage {
   protected objectTypesMetadataMap = new WeakMap<
@@ -9,7 +13,9 @@ export default class MetadataStorage {
   >();
   protected fieldsMetadataMap = new WeakMap<ClassType, FieldMetadata[]>();
 
-  protected constructor() {}
+  protected constructor() {
+    debug("created MetadataStorage instance");
+  }
 
   static get(): MetadataStorage {
     if (!global.TypeGraphQLMetadataStorage) {
@@ -19,6 +25,7 @@ export default class MetadataStorage {
   }
 
   collectObjectTypeMetadata(metadata: ObjectTypeMetadata): void {
+    // TODO: maybe check with `.has` to prevent duplicates?
     this.objectTypesMetadataMap.set(metadata.target, metadata);
   }
   findObjectTypeMetadata(typeClass: ClassType): ObjectTypeMetadata | undefined {
