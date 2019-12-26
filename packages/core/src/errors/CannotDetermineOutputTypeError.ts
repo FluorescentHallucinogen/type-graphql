@@ -5,18 +5,18 @@ import {
 import { BuildedTypeMetadata } from "@src/metadata/builder/definitions/common";
 
 export default class CannotDetermineOutputTypeError extends Error {
-  constructor(
-    metadata: TargetMetadata & PropertyMetadata & BuildedTypeMetadata,
-  ) {
-    const typeValue = metadata.type.value;
+  constructor({
+    target,
+    propertyKey,
+    type,
+  }: TargetMetadata & PropertyMetadata & BuildedTypeMetadata) {
     // TODO: add support for other kind of types
     const typeName =
-      typeValue instanceof Function ? typeValue.name : "<unknown>";
+      type.value instanceof Function ? type.value.name : "<unknown>";
     super(
       // TODO: add message about using input type or something as a type value
-      `Cannot determine GraphQL output type '${typeName}' of ${
-        metadata.target.name
-      }#${metadata.propertyKey.toString()}!`,
+      `Cannot determine GraphQL output type '${typeName}' ` +
+        `of ${target.name}#${propertyKey.toString()}!`,
     );
 
     Object.setPrototypeOf(this, new.target.prototype);

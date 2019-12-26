@@ -5,7 +5,7 @@ import {
 
 export default class MissingExplicitTypeError extends Error {
   constructor(
-    metadata: TargetMetadata & PropertyMetadata,
+    { target, propertyKey }: TargetMetadata & PropertyMetadata,
     typeValue: Function | undefined,
   ) {
     let errorMessage = "";
@@ -13,8 +13,8 @@ export default class MissingExplicitTypeError extends Error {
       errorMessage += `Cannot transform reflected type '${typeValue.name}'. `;
     }
     errorMessage += `You need to provide an explicit type for ${
-      metadata.target.name
-    }#${metadata.propertyKey.toString()} in decorator option, e.g. \`@Field(type => MyType)\`.`;
+      target.name
+    }#${propertyKey.toString()} in decorator option, e.g. \`@Field(type => MyType)\`.`;
     super(errorMessage);
 
     Object.setPrototypeOf(this, new.target.prototype);
