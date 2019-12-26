@@ -5,6 +5,7 @@ import {
   buildSchema,
   MissingExplicitTypeError,
   CannotDetermineOutputTypeError,
+  ConflictingExplicitTypeOptions,
 } from "@typegraphql/core";
 
 describe("Fields types > errors", () => {
@@ -131,6 +132,26 @@ describe("Fields types > errors", () => {
       expect(err).toBeInstanceOf(MissingExplicitTypeError);
       expect(err.message).toMatchInlineSnapshot(
         `"Cannot transform reflected type 'Object'. You need to provide an explicit type for SampleObject#sampleField in decorator option, e.g. \`@Field(type => MyType)\`."`,
+      );
+    }
+  });
+
+  it("should throw an error when using `typeFn` both as parameter and as option", async () => {
+    expect.assertions(2);
+
+    try {
+      @ObjectType()
+      class SampleObject {
+        @Field(_type => String, { typeFn: () => String })
+        sampleField!: unknown;
+      }
+      await buildSchema({
+        orphanedTypes: [SampleObject],
+      });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ConflictingExplicitTypeOptions);
+      expect(err.message).toMatchInlineSnapshot(
+        `"Conflicting explicit type options for SampleObject#sampleField. You can provide the explicit type only as a parameter or as an options object property at the same time."`,
       );
     }
   });

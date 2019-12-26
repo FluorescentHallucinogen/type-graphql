@@ -5,10 +5,19 @@ import {
   parseDecoratorParameters,
   parseStringOrSymbol,
 } from "@src/decorators/helpers";
-import { Nameable, Descriptionable, Nullable } from "@src/decorators/types";
+import {
+  Nameable,
+  Descriptionable,
+  Nullable,
+  ExplicitTypeable,
+} from "@src/decorators/types";
 import ClassType from "@src/interfaces/ClassType";
 
-export interface FieldOptions extends Nameable, Descriptionable, Nullable {}
+export interface FieldOptions
+  extends Nameable,
+    Descriptionable,
+    Nullable,
+    ExplicitTypeable {}
 
 /**
  * Decorator used to register the class property
@@ -31,16 +40,21 @@ export default function Field(
   options?: FieldOptions,
 ): TypedPropertyDecorator;
 export default function Field(
-  explicitTypeFnOrOptions?: ExplicitTypeFn | FieldOptions,
+  maybeExplicitTypeFnOrOptions?: ExplicitTypeFn | FieldOptions,
   maybeOptions?: FieldOptions,
 ): TypedPropertyDecorator {
-  const { explicitTypeFn, options = {} } = parseDecoratorParameters(
-    explicitTypeFnOrOptions,
-    maybeOptions,
-  );
   return (prototype, propertyKey) => {
+    const target = prototype.constructor as ClassType; // FIXME: fix typed decorator signature
+    const { explicitTypeFn, options = {} } = parseDecoratorParameters(
+      maybeExplicitTypeFnOrOptions,
+      maybeOptions,
+      {
+        target,
+        propertyKey,
+      },
+    );
     MetadataStorage.get().collectFieldMetadata({
-      target: prototype.constructor as ClassType, // FIXME: fix typed decorator signature
+      target,
       propertyKey,
       schemaName: options.schemaName ?? parseStringOrSymbol(propertyKey),
       description: options.description,

@@ -1,25 +1,38 @@
 import ExplicitTypeFn from "@src/interfaces/ExplicitTypeFn";
-import { MissingSymbolKeyDescriptionError } from "@src/errors";
+import {
+  MissingSymbolKeyDescriptionError,
+  ConflictingExplicitTypeOptions,
+} from "@src/errors";
+import { ExplicitTypeable } from "@src/decorators/types";
+import {
+  TargetMetadata,
+  PropertyMetadata,
+} from "@src/metadata/storage/definitions/common";
 
-export interface TypeDecoratorParams<TOptions extends object> {
-  options?: TOptions;
+export interface TypeDecoratorParams<TOptions extends ExplicitTypeable> {
+  options?: Omit<TOptions, keyof ExplicitTypeable>;
   explicitTypeFn?: ExplicitTypeFn;
 }
 
-export function parseDecoratorParameters<TOptions extends object>(
-  explicitTypeFnOrOptions: ExplicitTypeFn | TOptions | undefined,
+export function parseDecoratorParameters<TOptions extends ExplicitTypeable>(
+  maybeExplicitTypeFnOrOptions: ExplicitTypeFn | TOptions | undefined,
   maybeOptions: TOptions | undefined,
+  metadata: TargetMetadata & PropertyMetadata,
 ): TypeDecoratorParams<TOptions> {
-  if (typeof explicitTypeFnOrOptions === "function") {
-    return {
-      explicitTypeFn: explicitTypeFnOrOptions as ExplicitTypeFn,
-      options: maybeOptions,
-    };
-  } else {
-    return {
-      options: explicitTypeFnOrOptions,
-    };
+  if (!maybeExplicitTypeFnOrOptions) {
+    return {};
   }
+  if (typeof maybeExplicitTypeFnOrOptions === "object") {
+    const { typeFn: explicitTypeFn, ...options } = maybeExplicitTypeFnOrOptions;
+    return { explicitTypeFn, options };
+  }
+  if (maybeOptions?.typeFn) {
+    throw new ConflictingExplicitTypeOptions(metadata);
+  }
+  return {
+    explicitTypeFn: maybeExplicitTypeFnOrOptions,
+    options: maybeOptions,
+  };
 }
 
 const SYMBOL_DESCRIPTION_START_INDEX = 7;

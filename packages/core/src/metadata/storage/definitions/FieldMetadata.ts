@@ -13,5 +13,6 @@ export default interface FieldMetadata
     SchemaNameMetadata,
     NullableMetadata,
     DescriptionMetadata {
+  // TODO: move to common
   explicitTypeFn: ExplicitTypeFn | undefined;
 }
