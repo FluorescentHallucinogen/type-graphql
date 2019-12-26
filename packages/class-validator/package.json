@@ -18,13 +18,14 @@
   },
   "devDependencies": {
     "@typegraphql/core": "1.0.0-next.0",
-    "@types/node": "^12.12.14",
-    "@zerollup/ts-transform-paths": "^1.7.8",
+    "@types/jest": "^24.0.25",
+    "@types/node": "^13.1.1",
+    "@zerollup/ts-transform-paths": "~1.7.8",
     "class-validator": "^0.11.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.2.0",
     "ttypescript": "~1.5.8",
-    "typescript": "~3.7.3"
+    "typescript": "~3.7.4"
   },
   "license": "MIT",
   "engines": {
