@@ -1,7 +1,7 @@
 import "reflect-metadata";
-import { printType } from "graphql";
 
-import { buildSchema, ObjectType, Field } from "@typegraphql/core";
+import { ObjectType, Field } from "@typegraphql/core";
+import getPrintedType from "@tests/helpers/getPrintedType";
 
 describe("Fields types > symbol", () => {
   it("should should correctly generate schema field name when symbol is used as property key", async () => {
@@ -12,12 +12,9 @@ describe("Fields types > symbol", () => {
       [sampleFieldSymbol]!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: String!
       }"

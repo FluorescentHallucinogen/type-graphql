@@ -1,7 +1,7 @@
 import "reflect-metadata";
-import { printType } from "graphql";
 
-import { buildSchema, ObjectType, Field } from "@typegraphql/core";
+import { ObjectType, Field } from "@typegraphql/core";
+import getPrintedType from "@tests/helpers/getPrintedType";
 
 describe("Fields types > reflection", () => {
   it("should generate proper field signature in schema for string property type", async () => {
@@ -11,12 +11,9 @@ describe("Fields types > reflection", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: String!
       }"
@@ -30,12 +27,9 @@ describe("Fields types > reflection", () => {
       sampleField!: number;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: Float!
       }"
@@ -49,12 +43,9 @@ describe("Fields types > reflection", () => {
       sampleField!: boolean;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: Boolean!
       }"

@@ -1,7 +1,7 @@
 import "reflect-metadata";
-import { printType } from "graphql";
 
-import { buildSchema, ObjectType, Field } from "@typegraphql/core";
+import { ObjectType, Field } from "@typegraphql/core";
+import getPrintedType from "@tests/helpers/getPrintedType";
 
 describe("Fields types > nullable", () => {
   it("should correctly generate nullable field in schema using `nullable: true` decorator option", async () => {
@@ -11,12 +11,9 @@ describe("Fields types > nullable", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: String
       }"
@@ -30,13 +27,13 @@ describe("Fields types > nullable", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-      nullableByDefault: true,
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(
+      SampleObject,
+      undefined,
+      { nullableByDefault: true },
+    );
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: String
       }"
@@ -50,13 +47,13 @@ describe("Fields types > nullable", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-      nullableByDefault: true,
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(
+      SampleObject,
+      undefined,
+      { nullableByDefault: true },
+    );
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: String!
       }"
@@ -70,12 +67,9 @@ describe("Fields types > nullable", () => {
       sampleField!: unknown;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: [String]
       }"
@@ -89,12 +83,9 @@ describe("Fields types > nullable", () => {
       sampleField!: unknown;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: [[[String]]]
       }"

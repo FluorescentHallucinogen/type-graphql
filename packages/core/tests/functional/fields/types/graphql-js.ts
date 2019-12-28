@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import {
-  printType,
   GraphQLScalarType,
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLString,
 } from "graphql";
 
-import { buildSchema, ObjectType, Field } from "@typegraphql/core";
+import { ObjectType, Field } from "@typegraphql/core";
+import getPrintedType from "@tests/helpers/getPrintedType";
 
 describe("Fields types > GraphQL-JS interoperability", () => {
   it("should generate proper field signature in schema for explicit GraphQLScalarType", async () => {
@@ -21,12 +21,9 @@ describe("Fields types > GraphQL-JS interoperability", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: CustomScalar!
       }"
@@ -48,12 +45,9 @@ describe("Fields types > GraphQL-JS interoperability", () => {
       sampleField!: unknown;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObject {
         sampleField: CustomGraphQLObjectType!
       }"

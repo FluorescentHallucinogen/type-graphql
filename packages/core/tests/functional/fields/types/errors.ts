@@ -2,11 +2,11 @@ import "reflect-metadata";
 import {
   ObjectType,
   Field,
-  buildSchema,
   MissingExplicitTypeError,
   CannotDetermineOutputTypeError,
   ConflictingExplicitTypeOptions,
 } from "@typegraphql/core";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
 describe("Fields types > errors", () => {
   it("should throw an error if an undecorated class is used as an explicit type", async () => {
@@ -21,7 +21,7 @@ describe("Fields types > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {
@@ -41,7 +41,7 @@ describe("Fields types > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {
@@ -61,7 +61,7 @@ describe("Fields types > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {
@@ -84,7 +84,7 @@ describe("Fields types > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {
@@ -104,7 +104,7 @@ describe("Fields types > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {
@@ -125,7 +125,7 @@ describe("Fields types > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {
@@ -145,7 +145,7 @@ describe("Fields types > errors", () => {
         @Field(_type => String, { typeFn: () => String })
         sampleField!: unknown;
       }
-      await buildSchema({
+      await buildTestSchema({
         orphanedTypes: [SampleObject],
       });
     } catch (err) {

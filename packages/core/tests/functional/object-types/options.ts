@@ -1,7 +1,7 @@
 import "reflect-metadata";
-import { printType } from "graphql";
 
-import { buildSchema, ObjectType, Field } from "@typegraphql/core";
+import { ObjectType, Field } from "@typegraphql/core";
+import getPrintedType from "@tests/helpers/getPrintedType";
 
 describe("Object types > options", () => {
   it("should correctly generate type name using `schemaName` decorator option", async () => {
@@ -11,12 +11,12 @@ describe("Object types > options", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObjectSchemaName")!;
+    const printedSampleObjectType = await getPrintedType(
+      SampleObject,
+      "SampleObjectSchemaName",
+    );
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "type SampleObjectSchemaName {
         sampleField: String!
       }"
@@ -30,12 +30,9 @@ describe("Object types > options", () => {
       sampleField!: string;
     }
 
-    const schema = await buildSchema({
-      orphanedTypes: [SampleObject],
-    });
-    const sampleObjectType = schema.getType("SampleObject")!;
+    const printedSampleObjectType = await getPrintedType(SampleObject);
 
-    expect(printType(sampleObjectType)).toMatchInlineSnapshot(`
+    expect(printedSampleObjectType).toMatchInlineSnapshot(`
       "\\"\\"\\"SampleObject description\\"\\"\\"
       type SampleObject {
         sampleField: String!
