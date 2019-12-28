@@ -4,9 +4,11 @@ import ClassType from "@src/interfaces/ClassType";
 import ObjectTypeMetadata from "@src/metadata/storage/definitions/ObjectTypeMetadata";
 import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
 import ResolverMetadata from "@src/metadata/storage/definitions/ResolverMetadata";
+import QueryMetadata from "@src/metadata/storage/definitions/QueryMetadata";
 
 const debug = createDebug("@typegraphql/core:MetadataStorage");
 
+// TODO: refactor to map wrappers for easier array operations and exposing collect/find methods without violating DRY
 export default class MetadataStorage {
   protected objectTypesMetadataMap = new WeakMap<
     ClassType,
@@ -14,6 +16,7 @@ export default class MetadataStorage {
   >();
   protected fieldsMetadataMap = new WeakMap<ClassType, FieldMetadata[]>();
   protected resolversMetadataMap = new WeakMap<ClassType, ResolverMetadata>();
+  protected queriesMetadataMap = new WeakMap<ClassType, QueryMetadata[]>();
 
   protected constructor() {
     debug("created MetadataStorage instance");
@@ -40,7 +43,7 @@ export default class MetadataStorage {
       metadata,
     ]);
   }
-  findFieldMetadata(typeClass: ClassType): FieldMetadata[] | undefined {
+  findFieldsMetadata(typeClass: ClassType): FieldMetadata[] | undefined {
     return this.fieldsMetadataMap.get(typeClass);
   }
 
@@ -49,5 +52,15 @@ export default class MetadataStorage {
   }
   findResolverMetadata(typeClass: ClassType): ResolverMetadata | undefined {
     return this.resolversMetadataMap.get(typeClass);
+  }
+
+  collectQueryMetadata(metadata: FieldMetadata): void {
+    this.queriesMetadataMap.set(metadata.target, [
+      ...(this.queriesMetadataMap.get(metadata.target) ?? []),
+      metadata,
+    ]);
+  }
+  findQueriesMetadata(typeClass: ClassType): FieldMetadata[] | undefined {
+    return this.queriesMetadataMap.get(typeClass);
   }
 }

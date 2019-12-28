@@ -6,7 +6,7 @@ import TestResolver from "@tests/helpers/TestResolver";
 export default async function buildTestSchema(
   options: Partial<BuildSchemaOptions>,
 ): Promise<GraphQLSchema> {
-  return buildSchema({
+  return await buildSchema({
     resolvers: [TestResolver, ...(options.resolvers ?? [])],
     ...options,
   });

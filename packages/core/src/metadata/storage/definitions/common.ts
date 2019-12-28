@@ -1,4 +1,5 @@
 import ClassType from "@src/interfaces/ClassType";
+import ExplicitTypeFn from "@src/interfaces/ExplicitTypeFn";
 
 export interface TargetMetadata {
   target: ClassType;
@@ -18,4 +19,8 @@ export interface DescriptionMetadata {
 
 export interface NullableMetadata {
   nullable: boolean | undefined;
+}
+
+export interface ExplicitTypeMetadata {
+  explicitTypeFn: ExplicitTypeFn | undefined;
 }

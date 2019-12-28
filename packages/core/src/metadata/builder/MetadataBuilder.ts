@@ -8,6 +8,8 @@ import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata"
 import { getTypeMetadata } from "@src/metadata/builder/type-reflection";
 import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
 import MissingFieldsError from "@src/errors/MissingFieldsError";
+import BuiltResolverMetadata from "@src/metadata/builder/definitions/ResolverMetadata";
+import BuiltQueryMetadata from "@src/metadata/builder/definitions/QueryMetadata";
 
 const debug = createDebug("@typegraphql/core:MetadataBuilder");
 
@@ -15,6 +17,10 @@ export default class MetadataBuilder {
   private readonly typeMetadataByClassMap = new WeakMap<
     ClassType,
     BuiltObjectTypeMetadata
+  >();
+  private readonly resolverMetadataByClassMap = new WeakMap<
+    ClassType,
+    BuiltResolverMetadata
   >();
 
   constructor(protected readonly buildSchemaOptions: BuildSchemaOptions) {
@@ -33,7 +39,7 @@ export default class MetadataBuilder {
       throw new MissingClassMetadataError(typeClass, "ObjectType");
     }
 
-    const objectTypeFieldsMetadata = MetadataStorage.get().findFieldMetadata(
+    const objectTypeFieldsMetadata = MetadataStorage.get().findFieldsMetadata(
       typeClass,
     );
     if (!objectTypeFieldsMetadata || objectTypeFieldsMetadata.length === 0) {
@@ -55,5 +61,39 @@ export default class MetadataBuilder {
 
     this.typeMetadataByClassMap.set(typeClass, builtObjectTypeMetadata);
     return builtObjectTypeMetadata;
+  }
+
+  getResolverMetadataByClass(typeClass: ClassType): BuiltResolverMetadata {
+    if (this.resolverMetadataByClassMap.has(typeClass)) {
+      return this.resolverMetadataByClassMap.get(typeClass)!;
+    }
+
+    const resolverMetadata = MetadataStorage.get().findResolverMetadata(
+      typeClass,
+    );
+    if (!resolverMetadata) {
+      throw new Error("TODO: proper message");
+    }
+
+    const queriesMetadata = MetadataStorage.get().findQueriesMetadata(
+      typeClass,
+    );
+    if (!queriesMetadata || queriesMetadata.length === 0) {
+      throw new Error("TODO: proper message");
+    }
+
+    const builtResolverMetadata: BuiltResolverMetadata = {
+      ...resolverMetadata,
+      queries: queriesMetadata.map<BuiltQueryMetadata>(queryMetadata => ({
+        ...queryMetadata,
+        type: getTypeMetadata(
+          queryMetadata,
+          this.buildSchemaOptions.nullableByDefault,
+        ),
+      })),
+    };
+
+    this.resolverMetadataByClassMap.set(typeClass, builtResolverMetadata);
+    return builtResolverMetadata;
   }
 }

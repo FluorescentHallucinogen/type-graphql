@@ -5,7 +5,6 @@ import {
   GraphQLSchema,
   GraphQLNamedType,
   GraphQLObjectType,
-  GraphQLString,
   GraphQLFieldConfigMap,
   GraphQLOutputType,
 } from "graphql";
@@ -17,12 +16,13 @@ import {
 } from "@src/schema/type-converting";
 import TypeValue from "@src/interfaces/TypeValue";
 import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata";
-import { BuildedTypeMetadata } from "@src/metadata/builder/definitions/common";
+import { BuiltTypeMetadata } from "@src/metadata/builder/definitions/common";
 import CannotDetermineOutputTypeError from "@src/errors/CannotDetermineOutputTypeError";
 import {
   TargetMetadata,
   PropertyMetadata,
 } from "@src/metadata/storage/definitions/common";
+import BuiltQueryMetadata from "@src/metadata/builder/definitions/QueryMetadata";
 
 const debug = createDebug("@typegraphql/core:SchemaGenerator");
 
@@ -37,23 +37,41 @@ export default class SchemaGenerator {
 
   generate(): GraphQLSchema {
     return new GraphQLSchema({
-      // TODO: replace placeholder query object type
-      query: new GraphQLObjectType({
-        name: "Query",
-        fields: {
-          hello: {
-            type: GraphQLString,
-            resolve: () => "Hello World",
-          },
-        },
-      }),
+      query: this.getQueryType(),
       types: this.getOrphanedTypes(),
     });
   }
 
+  private getQueryType(): GraphQLObjectType {
+    const resolversMetadata = this.buildSchemaOptions.resolvers.map(
+      resolverClass =>
+        this.metadataBuilder.getResolverMetadataByClass(resolverClass),
+    );
+    // TODO: attach resolver metadata reference to query metadata
+    const queries = ([] as BuiltQueryMetadata[]).concat(
+      ...resolversMetadata.map(it => it.queries),
+    );
+    return new GraphQLObjectType({
+      name: "Query",
+      fields: queries.reduce<GraphQLFieldConfigMap<unknown, unknown, unknown>>(
+        (fields, queryMetadata) => {
+          fields[queryMetadata.schemaName] = {
+            type: this.getGraphQLOutputType(queryMetadata),
+            // FIXME: replace with generated handler resolver
+            resolve: () => "Hello World",
+          };
+          return fields;
+        },
+        {},
+      ),
+    });
+  }
+
   private getOrphanedTypes(): GraphQLNamedType[] {
-    return this.buildSchemaOptions.orphanedTypes.map(orphanedTypeClass =>
-      this.getTypeByClass(orphanedTypeClass),
+    return (
+      this.buildSchemaOptions.orphanedTypes?.map(orphanedTypeClass =>
+        this.getTypeByClass(orphanedTypeClass),
+      ) ?? []
     );
   }
 
@@ -96,7 +114,7 @@ export default class SchemaGenerator {
   }
 
   private getGraphQLOutputType(
-    metadata: TargetMetadata & PropertyMetadata & BuildedTypeMetadata,
+    metadata: TargetMetadata & PropertyMetadata & BuiltTypeMetadata,
   ): GraphQLOutputType {
     for (const foundType of this.searchForGraphQLOutputType(
       metadata.type.value,
