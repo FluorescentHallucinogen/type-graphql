@@ -1,8 +1,9 @@
 import createDebug from "debug";
 
+import ClassType from "@src/interfaces/ClassType";
 import ObjectTypeMetadata from "@src/metadata/storage/definitions/ObjectTypeMetadata";
 import FieldMetadata from "@src/metadata/storage/definitions/FieldMetadata";
-import ClassType from "@src/interfaces/ClassType";
+import ResolverMetadata from "@src/metadata/storage/definitions/ResolverMetadata";
 
 const debug = createDebug("@typegraphql/core:MetadataStorage");
 
@@ -12,6 +13,7 @@ export default class MetadataStorage {
     ObjectTypeMetadata
   >();
   protected fieldsMetadataMap = new WeakMap<ClassType, FieldMetadata[]>();
+  protected resolversMetadataMap = new WeakMap<ClassType, ResolverMetadata>();
 
   protected constructor() {
     debug("created MetadataStorage instance");
@@ -40,5 +42,12 @@ export default class MetadataStorage {
   }
   findFieldMetadata(typeClass: ClassType): FieldMetadata[] | undefined {
     return this.fieldsMetadataMap.get(typeClass);
+  }
+
+  collectResolverMetadata(metadata: ResolverMetadata): void {
+    this.resolversMetadataMap.set(metadata.target, metadata);
+  }
+  findResolverMetadata(typeClass: ClassType): ResolverMetadata | undefined {
+    return this.resolversMetadataMap.get(typeClass);
   }
 }

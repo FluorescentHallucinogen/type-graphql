@@ -3,3 +3,4 @@ export {
   ObjectTypeOptions,
 } from "@src/decorators/ObjectType";
 export { default as Field, FieldOptions } from "@src/decorators/Field";
+export { default as Resolver } from "@src/decorators/Resolver";
