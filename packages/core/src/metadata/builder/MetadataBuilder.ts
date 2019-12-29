@@ -5,7 +5,10 @@ import ClassType from "@src/interfaces/ClassType";
 import MetadataStorage from "@src/metadata/storage/MetadataStorage";
 import BuiltObjectTypeMetadata from "@src/metadata/builder/definitions/ObjectTypeMetadata";
 import BuiltFieldMetadata from "@src/metadata/builder/definitions/FieldMetadata";
-import { getTypeMetadata } from "@src/metadata/builder/type-reflection";
+import {
+  getFieldTypeMetadata,
+  getQueryTypeMetadata,
+} from "@src/metadata/builder/type-reflection";
 import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
 import MissingFieldsError from "@src/errors/MissingFieldsError";
 import BuiltResolverMetadata from "@src/metadata/builder/definitions/ResolverMetadata";
@@ -51,7 +54,7 @@ export default class MetadataBuilder {
       fields: objectTypeFieldsMetadata.map<BuiltFieldMetadata>(
         fieldMetadata => ({
           ...fieldMetadata,
-          type: getTypeMetadata(
+          type: getFieldTypeMetadata(
             fieldMetadata,
             this.buildSchemaOptions.nullableByDefault,
           ),
@@ -86,7 +89,7 @@ export default class MetadataBuilder {
       ...resolverMetadata,
       queries: queriesMetadata.map<BuiltQueryMetadata>(queryMetadata => ({
         ...queryMetadata,
-        type: getTypeMetadata(
+        type: getQueryTypeMetadata(
           queryMetadata,
           this.buildSchemaOptions.nullableByDefault,
         ),
