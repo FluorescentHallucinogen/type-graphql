@@ -20,7 +20,7 @@
     "@typegraphql/core": "1.0.0-next.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.1.1",
-    "@zerollup/ts-transform-paths": "~1.7.8",
+    "@zerollup/ts-transform-paths": "~1.7.9",
     "class-validator": "^0.11.0",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
