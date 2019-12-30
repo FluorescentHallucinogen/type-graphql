@@ -13,6 +13,7 @@ module.exports = {
       compiler: "ttypescript",
     },
   },
+  setupFilesAfterEnv: ["jest-extended"],
   collectCoverage: false,
   coverageDirectory: "<rootDir>/coverage",
   collectCoverageFrom: ["<rootDir>/src/**/*.ts", "!<rootDir>/src/**/*.d.ts"],

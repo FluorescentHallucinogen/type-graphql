@@ -8,5 +8,6 @@ describe("foo", () => {
     help();
 
     expect(result).toBe("foo");
+    expect(result).not.toBeArray();
   });
 });
