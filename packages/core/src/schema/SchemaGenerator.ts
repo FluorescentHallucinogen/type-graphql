@@ -35,7 +35,7 @@ export default class SchemaGenerator {
     this.metadataBuilder = new MetadataBuilder(buildSchemaOptions);
   }
 
-  generate(): GraphQLSchema {
+  generateSchema(): GraphQLSchema {
     return new GraphQLSchema({
       query: this.getQueryType(),
       types: this.getOrphanedTypes(),
@@ -57,6 +57,7 @@ export default class SchemaGenerator {
         (fields, queryMetadata) => {
           fields[queryMetadata.schemaName] = {
             type: this.getGraphQLOutputType(queryMetadata),
+            description: queryMetadata.description,
             // FIXME: replace with generated handler resolver
             resolve: () => "Hello World",
           };

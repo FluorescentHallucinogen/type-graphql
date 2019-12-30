@@ -13,6 +13,7 @@ import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
 import MissingFieldsError from "@src/errors/MissingFieldsError";
 import BuiltResolverMetadata from "@src/metadata/builder/definitions/ResolverMetadata";
 import BuiltQueryMetadata from "@src/metadata/builder/definitions/QueryMetadata";
+import MissingResolverMethodsError from "@src/errors/MissingResolverMethodsError";
 
 const debug = createDebug("@typegraphql/core:MetadataBuilder");
 
@@ -66,23 +67,24 @@ export default class MetadataBuilder {
     return builtObjectTypeMetadata;
   }
 
-  getResolverMetadataByClass(typeClass: ClassType): BuiltResolverMetadata {
-    if (this.resolverMetadataByClassMap.has(typeClass)) {
-      return this.resolverMetadataByClassMap.get(typeClass)!;
+  getResolverMetadataByClass(resolverClass: ClassType): BuiltResolverMetadata {
+    if (this.resolverMetadataByClassMap.has(resolverClass)) {
+      return this.resolverMetadataByClassMap.get(resolverClass)!;
     }
 
     const resolverMetadata = MetadataStorage.get().findResolverMetadata(
-      typeClass,
+      resolverClass,
     );
     if (!resolverMetadata) {
-      throw new Error("TODO: proper message");
+      throw new MissingClassMetadataError(resolverClass, "Resolver");
     }
 
     const queriesMetadata = MetadataStorage.get().findQueriesMetadata(
-      typeClass,
+      resolverClass,
     );
+    // TODO: replace with a more sophisticated check - also for mutations and subscriptions
     if (!queriesMetadata || queriesMetadata.length === 0) {
-      throw new Error("TODO: proper message");
+      throw new MissingResolverMethodsError(resolverClass);
     }
 
     const builtResolverMetadata: BuiltResolverMetadata = {
@@ -96,7 +98,7 @@ export default class MetadataBuilder {
       })),
     };
 
-    this.resolverMetadataByClassMap.set(typeClass, builtResolverMetadata);
+    this.resolverMetadataByClassMap.set(resolverClass, builtResolverMetadata);
     return builtResolverMetadata;
   }
 }

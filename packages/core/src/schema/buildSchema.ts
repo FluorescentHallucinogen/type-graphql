@@ -13,5 +13,5 @@ export default async function buildSchema(
   const schemaGenerator = new SchemaGenerator(options);
   // TODO: remove the falsy async placeholder
   await new Promise(r => setImmediate(r));
-  return schemaGenerator.generate();
+  return schemaGenerator.generateSchema();
 }

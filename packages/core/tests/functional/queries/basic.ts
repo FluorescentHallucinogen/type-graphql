@@ -1,25 +1,21 @@
 import "reflect-metadata";
-import { printType } from "graphql";
 
-import { buildSchema, Resolver, Query } from "@typegraphql/core";
+import { Resolver, Query } from "@typegraphql/core";
+import getPrintedQuery from "@tests/helpers/getPrintedQuery";
 
 describe("Queries > basic", () => {
   it("should generate proper schema signature for basic resolver with query", async () => {
     @Resolver()
     class SampleResolver {
-      // TODO: remove explicit type when reflection done
-      @Query(_returns => String)
+      @Query()
       sampleQuery(): string {
         return "sampleQuery";
       }
     }
 
-    const schema = await buildSchema({
-      resolvers: [SampleResolver],
-    });
-    const queryType = schema.getQueryType()!;
+    const printedQueryType = await getPrintedQuery(SampleResolver);
 
-    expect(printType(queryType)).toMatchInlineSnapshot(`
+    expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
         sampleQuery: String!
       }"

@@ -27,7 +27,7 @@ describe("Object types > errors", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(MissingClassMetadataError);
       expect(err.message).toMatchInlineSnapshot(
-        `"Cannot find metadata for 'UnknownClass' in storage. Is it decorated with an @ObjectType decorator?"`,
+        `"Cannot find metadata for class 'UnknownClass' in storage. Is it annotated with the '@ObjectType' decorator?"`,
       );
     }
   });
@@ -46,7 +46,7 @@ describe("Object types > errors", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(MissingFieldsError);
       expect(err.message).toMatchInlineSnapshot(
-        `"Cannot find fields metadata for 'SampleObject' in storage. Are the properties decorated with a @Field() decorator?"`,
+        `"Cannot find any fields metadata for type class 'SampleObject' in storage. Are the properties annotated with a '@Field()' decorator?"`,
       );
     }
   });
