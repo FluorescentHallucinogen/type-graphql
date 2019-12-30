@@ -22,7 +22,7 @@ import {
   TargetMetadata,
   PropertyMetadata,
 } from "@src/metadata/storage/definitions/common";
-import BuiltQueryMetadata from "@src/metadata/builder/definitions/QueryMetadata";
+import flatten from "@src/helpers/flatten";
 
 const debug = createDebug("@typegraphql/core:SchemaGenerator");
 
@@ -37,20 +37,19 @@ export default class SchemaGenerator {
 
   generateSchema(): GraphQLSchema {
     return new GraphQLSchema({
-      query: this.getQueryType(),
-      types: this.getOrphanedTypes(),
+      query: this.generateQueryType(),
+      types: this.generateOrphanedTypes(),
     });
   }
 
-  private getQueryType(): GraphQLObjectType {
+  private generateQueryType(): GraphQLObjectType {
     const resolversMetadata = this.buildSchemaOptions.resolvers.map(
       resolverClass =>
         this.metadataBuilder.getResolverMetadataByClass(resolverClass),
     );
     // TODO: attach resolver metadata reference to query metadata
-    const queries = ([] as BuiltQueryMetadata[]).concat(
-      ...resolversMetadata.map(it => it.queries),
-    );
+    const queries = flatten(resolversMetadata.map(it => it.queries));
+
     return new GraphQLObjectType({
       name: "Query",
       fields: queries.reduce<GraphQLFieldConfigMap<unknown, unknown, unknown>>(
@@ -58,8 +57,17 @@ export default class SchemaGenerator {
           fields[queryMetadata.schemaName] = {
             type: this.getGraphQLOutputType(queryMetadata),
             description: queryMetadata.description,
-            // FIXME: replace with generated handler resolver
-            resolve: () => "Hello World",
+            // TODO: refactor to runtime helpers
+            resolve: () => {
+              // workaround until TS support indexing by symbol
+              // https://github.com/microsoft/TypeScript/issues/1863
+              const methodName = queryMetadata.propertyKey as string;
+              // TODO: use container
+              const resolverInstance = new queryMetadata.target() as {
+                [propertyKey: string]: (...args: unknown[]) => unknown;
+              };
+              return resolverInstance[methodName]();
+            },
           };
           return fields;
         },
@@ -68,7 +76,7 @@ export default class SchemaGenerator {
     });
   }
 
-  private getOrphanedTypes(): GraphQLNamedType[] {
+  private generateOrphanedTypes(): GraphQLNamedType[] {
     return (
       this.buildSchemaOptions.orphanedTypes?.map(orphanedTypeClass =>
         this.getTypeByClass(orphanedTypeClass),

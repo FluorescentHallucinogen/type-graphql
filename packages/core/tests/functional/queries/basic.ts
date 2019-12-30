@@ -1,6 +1,8 @@
 import "reflect-metadata";
+import gql from "graphql-tag";
+import { execute } from "graphql";
 
-import { Resolver, Query } from "@typegraphql/core";
+import { Resolver, Query, buildSchema } from "@typegraphql/core";
 import getPrintedQuery from "@tests/helpers/getPrintedQuery";
 
 describe("Queries > basic", () => {
@@ -19,6 +21,32 @@ describe("Queries > basic", () => {
       "type Query {
         sampleQuery: String!
       }"
+    `);
+  });
+
+  it("should execute resolver class method for basic query", async () => {
+    @Resolver()
+    class SampleResolver {
+      @Query()
+      sampleQuery(): string {
+        return "sampleQueryReturnedValue";
+      }
+    }
+    const document = gql`
+      query {
+        sampleQuery
+      }
+    `;
+
+    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const result = await execute({ schema, document });
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "sampleQuery": "sampleQueryReturnedValue",
+        },
+      }
     `);
   });
 });

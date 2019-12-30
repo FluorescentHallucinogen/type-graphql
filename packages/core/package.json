@@ -22,6 +22,7 @@
     "@types/node": "^13.1.1",
     "@zerollup/ts-transform-paths": "~1.7.9",
     "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
     "reflect-metadata": "^0.1.13",
