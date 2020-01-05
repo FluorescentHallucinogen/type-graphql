@@ -3,7 +3,7 @@ import ExplicitTypeFn from "@src/interfaces/ExplicitTypeFn";
 export interface Nameable {
   /**
    * A string that will be emitted in GraphQL schema,
-   * which will overwrite the implicit one taken from a property/method name.
+   * which will overwrite the implicit one taken from a property/method name
    */
   schemaName?: string;
 }

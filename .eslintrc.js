@@ -108,6 +108,7 @@ module.exports = {
       rules: {
         "jest/no-try-expect": "off",
         "@typescript-eslint/no-magic-numbers": "off",
+        "@typescript-eslint/unbound-method": "off",
       },
     },
   ],

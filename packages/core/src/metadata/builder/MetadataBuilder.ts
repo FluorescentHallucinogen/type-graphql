@@ -1,6 +1,5 @@
 import createDebug from "debug";
 
-import BuildSchemaOptions from "@src/schema/BuildSchemaOptions";
 import ClassType from "@src/interfaces/ClassType";
 import MetadataStorage from "@src/metadata/storage/MetadataStorage";
 import BuiltObjectTypeMetadata from "@src/metadata/builder/definitions/ObjectTypeMetadata";
@@ -14,10 +13,11 @@ import MissingFieldsError from "@src/errors/MissingFieldsError";
 import BuiltResolverMetadata from "@src/metadata/builder/definitions/ResolverMetadata";
 import BuiltQueryMetadata from "@src/metadata/builder/definitions/QueryMetadata";
 import MissingResolverMethodsError from "@src/errors/MissingResolverMethodsError";
+import { BuildSchemaConfig } from "@src/schema/schema-config";
 
 const debug = createDebug("@typegraphql/core:MetadataBuilder");
 
-export default class MetadataBuilder {
+export default class MetadataBuilder<TContext extends object = {}> {
   private readonly typeMetadataByClassMap = new WeakMap<
     ClassType,
     BuiltObjectTypeMetadata
@@ -27,8 +27,8 @@ export default class MetadataBuilder {
     BuiltResolverMetadata
   >();
 
-  constructor(protected readonly buildSchemaOptions: BuildSchemaOptions) {
-    debug("created MetadataBuilder instance", buildSchemaOptions);
+  constructor(protected readonly config: BuildSchemaConfig<TContext>) {
+    debug("created MetadataBuilder instance", config);
   }
 
   getTypeMetadataByClass(typeClass: ClassType): BuiltObjectTypeMetadata {
@@ -57,7 +57,7 @@ export default class MetadataBuilder {
           ...fieldMetadata,
           type: getFieldTypeMetadata(
             fieldMetadata,
-            this.buildSchemaOptions.nullableByDefault,
+            this.config.nullableByDefault,
           ),
         }),
       ),
@@ -93,7 +93,7 @@ export default class MetadataBuilder {
         ...queryMetadata,
         type: getQueryTypeMetadata(
           queryMetadata,
-          this.buildSchemaOptions.nullableByDefault,
+          this.config.nullableByDefault,
         ),
       })),
     };

@@ -23,16 +23,26 @@ import {
   PropertyMetadata,
 } from "@src/metadata/storage/definitions/common";
 import flatten from "@src/helpers/flatten";
+import RuntimeGenerator from "@src/runtime/RuntimeGenerator";
+import {
+  BuildSchemaConfig,
+  createSchemaConfig,
+} from "@src/schema/schema-config";
+import getFirstDefinedValue from "@src/helpers/getFirstDefinedValue";
 
 const debug = createDebug("@typegraphql/core:SchemaGenerator");
 
-export default class SchemaGenerator {
+export default class SchemaGenerator<TContext extends object = {}> {
+  private readonly config: BuildSchemaConfig<TContext>;
+  private readonly metadataBuilder: MetadataBuilder<TContext>;
+  private readonly runtimeGenerator: RuntimeGenerator<TContext>;
   private readonly typeByClassMap = new WeakMap<ClassType, GraphQLObjectType>();
-  private readonly metadataBuilder: MetadataBuilder;
 
-  constructor(private readonly buildSchemaOptions: BuildSchemaOptions) {
-    debug("created SchemaGenerator instance", buildSchemaOptions);
-    this.metadataBuilder = new MetadataBuilder(buildSchemaOptions);
+  constructor(options: BuildSchemaOptions<TContext>) {
+    debug("created SchemaGenerator instance", options);
+    this.config = createSchemaConfig(options);
+    this.metadataBuilder = new MetadataBuilder(this.config);
+    this.runtimeGenerator = new RuntimeGenerator(this.config);
   }
 
   generateSchema(): GraphQLSchema {
@@ -43,31 +53,23 @@ export default class SchemaGenerator {
   }
 
   private generateQueryType(): GraphQLObjectType {
-    const resolversMetadata = this.buildSchemaOptions.resolvers.map(
-      resolverClass =>
-        this.metadataBuilder.getResolverMetadataByClass(resolverClass),
+    const resolversMetadata = this.config.resolvers.map(resolverClass =>
+      this.metadataBuilder.getResolverMetadataByClass(resolverClass),
     );
     // TODO: attach resolver metadata reference to query metadata
     const queries = flatten(resolversMetadata.map(it => it.queries));
 
     return new GraphQLObjectType({
       name: "Query",
-      fields: queries.reduce<GraphQLFieldConfigMap<unknown, unknown, unknown>>(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      fields: queries.reduce<GraphQLFieldConfigMap<unknown, any, object>>(
         (fields, queryMetadata) => {
           fields[queryMetadata.schemaName] = {
             type: this.getGraphQLOutputType(queryMetadata),
             description: queryMetadata.description,
-            // TODO: refactor to runtime helpers
-            resolve: () => {
-              // workaround until TS support indexing by symbol
-              // https://github.com/microsoft/TypeScript/issues/1863
-              const methodName = queryMetadata.propertyKey as string;
-              // TODO: use container
-              const resolverInstance = new queryMetadata.target() as {
-                [propertyKey: string]: (...args: unknown[]) => unknown;
-              };
-              return resolverInstance[methodName]();
-            },
+            resolve: this.runtimeGenerator.generateQueryResolveHandler(
+              queryMetadata,
+            ),
           };
           return fields;
         },
@@ -78,7 +80,7 @@ export default class SchemaGenerator {
 
   private generateOrphanedTypes(): GraphQLNamedType[] {
     return (
-      this.buildSchemaOptions.orphanedTypes?.map(orphanedTypeClass =>
+      this.config.orphanedTypes?.map(orphanedTypeClass =>
         this.getTypeByClass(orphanedTypeClass),
       ) ?? []
     );
@@ -125,15 +127,13 @@ export default class SchemaGenerator {
   private getGraphQLOutputType(
     metadata: TargetMetadata & PropertyMetadata & BuiltTypeMetadata,
   ): GraphQLOutputType {
-    for (const foundType of this.searchForGraphQLOutputType(
-      metadata.type.value,
-    )) {
-      if (foundType) {
-        return wrapWithModifiers(foundType, metadata.type.modifiers);
-      }
+    const outputType = getFirstDefinedValue(
+      this.searchForGraphQLOutputType(metadata.type.value),
+    );
+    if (!outputType) {
+      throw new CannotDetermineOutputTypeError(metadata);
     }
-
-    throw new CannotDetermineOutputTypeError(metadata);
+    return wrapWithModifiers(outputType, metadata.type.modifiers);
   }
 
   private *searchForGraphQLOutputType(

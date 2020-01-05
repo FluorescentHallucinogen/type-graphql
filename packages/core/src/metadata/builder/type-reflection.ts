@@ -55,7 +55,7 @@ function getTypeMetadata(
     PropertyMetadata &
     ExplicitTypeMetadata &
     NullableMetadata,
-  nullableByDefault: boolean | undefined,
+  nullableByDefault: boolean,
   reflectedType: Function | undefined,
 ): TypeMetadata {
   const { explicitType, listDepth } = unwrapExplicitType(
@@ -72,14 +72,14 @@ function getTypeMetadata(
     value: (explicitType ?? reflectedType) as TypeValue,
     modifiers: {
       listDepth,
-      nullable: metadata.nullable ?? nullableByDefault ?? false,
+      nullable: metadata.nullable ?? nullableByDefault,
     },
   };
 }
 
 export function getFieldTypeMetadata(
   fieldMetadata: FieldMetadata,
-  nullableByDefault: boolean | undefined,
+  nullableByDefault: boolean,
 ): TypeMetadata {
   const reflectedType = getReflectedType("property", fieldMetadata);
   return getTypeMetadata(fieldMetadata, nullableByDefault, reflectedType);
@@ -87,7 +87,7 @@ export function getFieldTypeMetadata(
 
 export function getQueryTypeMetadata(
   queryMetadata: QueryMetadata,
-  nullableByDefault: boolean | undefined,
+  nullableByDefault: boolean,
 ): TypeMetadata {
   const reflectedType = getReflectedType("method", queryMetadata);
   return getTypeMetadata(queryMetadata, nullableByDefault, reflectedType);

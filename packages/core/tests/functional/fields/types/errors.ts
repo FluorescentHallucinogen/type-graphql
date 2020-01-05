@@ -120,7 +120,7 @@ describe("Fields types > errors", () => {
     @ObjectType()
     class SampleObject {
       @Field()
-      // eslint-disable-next-line
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       sampleField!: any;
     }
 

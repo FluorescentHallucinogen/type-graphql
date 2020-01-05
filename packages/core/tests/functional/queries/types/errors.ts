@@ -130,7 +130,7 @@ describe("Queries return types > errors", () => {
     @Resolver()
     class SampleResolver {
       @Query()
-      // eslint-disable-next-line
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       sampleQuery(): any {
         return null;
       }
