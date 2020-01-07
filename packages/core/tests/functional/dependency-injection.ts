@@ -100,4 +100,38 @@ describe("Dependency Injection", () => {
       info: expect.any(Object),
     });
   });
+
+  it("should await for async container while getting instance of resolver class", async () => {
+    const initValue = Math.random();
+    class SampleService {
+      readonly value = initValue;
+    }
+    @Resolver()
+    class SampleResolver {
+      constructor(private readonly sampleService: SampleService) {}
+      @Query()
+      sampleQuery(): number {
+        return this.sampleService.value;
+      }
+    }
+    const document = gql`
+      query {
+        sampleQuery
+      }
+    `;
+    const asyncContainer: ContainerType = {
+      async get(cls) {
+        return Promise.resolve(Container.get(cls));
+      },
+    };
+    const schema = await buildSchema({
+      resolvers: [SampleResolver],
+      container: asyncContainer,
+    });
+
+    const { data, errors } = await execute({ schema, document });
+
+    expect(errors).toBeUndefined();
+    expect(data?.sampleQuery).toEqual(initValue);
+  });
 });

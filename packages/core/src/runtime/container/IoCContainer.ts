@@ -32,7 +32,7 @@ export default class IoCContainer<TContext extends object = {}> {
   getInstance<TInstance extends object = {}>(
     someClass: ClassType<TInstance>,
     resolverData: ResolverData<TContext>,
-  ): TInstance {
+  ): PromiseLike<TInstance> | TInstance {
     // we always assign container or containerGetter in constructor
     const container = (this.container ?? this.containerGetter?.(resolverData))!;
     return container.get(someClass, resolverData);

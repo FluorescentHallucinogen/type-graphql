@@ -9,7 +9,7 @@ export interface ContainerType {
   get<TInstance extends object = {}>(
     resolverClass: ClassType<TInstance>,
     resolverData: ResolverData,
-  ): TInstance;
+  ): PromiseLike<TInstance> | TInstance;
 }
 
 /**

@@ -97,7 +97,7 @@ module.exports = {
     "@typescript-eslint/promise-function-async": "warn",
     "@typescript-eslint/restrict-plus-operands": "error",
     "@typescript-eslint/restrict-template-expressions": "warn",
-    "@typescript-eslint/return-await": ["warn", "always"],
+    "@typescript-eslint/return-await": ["warn", "in-try-catch"],
     "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/unbound-method": "error",
     "@typescript-eslint/unified-signatures": "error",
