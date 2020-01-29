@@ -10,6 +10,18 @@ export interface InputTypeOptions extends Nameable, Descriptionable {}
  * ```graphql
  * input MyClass {
  *  myProperty: SomeType!
+ *  myOtherProperty: SomeOtherType!
+ * }
+ * ```
+ *
+ * Can be also used as the args of query/mutation/field resolver arguments, e.g.:
+ *
+ * ```graphql
+ * type Mutation {
+ *  sampleMutation(
+ *    myProperty: SomeType!
+ *    myOtherProperty: SomeOtherType!
+ *  ): OtherType!
  * }
  * ```
  */
