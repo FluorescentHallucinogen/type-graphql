@@ -27,6 +27,10 @@ import {
   TargetClassMetadata,
   PropertyMetadata,
 } from "@src/metadata/storage/definitions/common";
+import MutationMetadata from "@src/interfaces/metadata/MutationMetadata";
+import RawBaseResolverHandlerMetadata from "@src/metadata/storage/definitions/BaseResolverHandlerMetadata";
+import BaseResolverHandlerMetadata from "@src/interfaces/metadata/BaseResolverHandlerMetadata";
+import ResolverHandlerKind from "@src/interfaces/metadata/ResolverHandlerKind";
 
 const debug = createDebug("@typegraphql/core:MetadataBuilder");
 
@@ -147,48 +151,22 @@ export default class MetadataBuilder<TContext extends object = {}> {
 
     const resolverMetadata: ResolverMetadata = {
       ...rawResolverMetadata,
-      // TODO: refactor to a more generalized solution [2]
       queries: rawQueriesMetadata.map<QueryMetadata>(rawQueryMetadata => {
-        const rawQueryParametersMetadata =
-          RawMetadataStorage.get().findParametersMetadata(
-            resolverClass,
-            rawQueryMetadata.propertyKey,
-          ) ?? [];
-        this.checkArgsParametersUsage(
-          rawQueryParametersMetadata,
-          rawQueryMetadata,
-        );
         return {
-          ...rawQueryMetadata,
-          type: getMethodTypeMetadata(
+          ...this.buildResolverHandlerMetadata(
+            ResolverHandlerKind.Query,
             rawQueryMetadata,
-            this.config.nullableByDefault,
-            "Query",
+            resolverClass,
           ),
-          parameters: this.buildParametersMetadata(rawQueryParametersMetadata),
         };
       }),
-      // TODO: refactor to a more generalized solution [2]
-      mutations: rawMutationsMetadata.map<QueryMetadata>(
+      mutations: rawMutationsMetadata.map<MutationMetadata>(
         rawMutationMetadata => {
-          const rawQueryParametersMetadata =
-            RawMetadataStorage.get().findParametersMetadata(
-              resolverClass,
-              rawMutationMetadata.propertyKey,
-            ) ?? [];
-          this.checkArgsParametersUsage(
-            rawQueryParametersMetadata,
-            rawMutationMetadata,
-          );
           return {
-            ...rawMutationMetadata,
-            type: getMethodTypeMetadata(
+            ...this.buildResolverHandlerMetadata(
+              ResolverHandlerKind.Mutation,
               rawMutationMetadata,
-              this.config.nullableByDefault,
-              "Mutation",
-            ),
-            parameters: this.buildParametersMetadata(
-              rawQueryParametersMetadata,
+              resolverClass,
             ),
           };
         },
@@ -197,6 +175,28 @@ export default class MetadataBuilder<TContext extends object = {}> {
 
     this.resolverMetadataByClassMap.set(resolverClass, resolverMetadata);
     return resolverMetadata;
+  }
+
+  private buildResolverHandlerMetadata(
+    kind: ResolverHandlerKind,
+    handlerMetadata: RawBaseResolverHandlerMetadata,
+    resolverClass: ClassType,
+  ): BaseResolverHandlerMetadata {
+    const rawQueryParametersMetadata =
+      RawMetadataStorage.get().findParametersMetadata(
+        resolverClass,
+        handlerMetadata.propertyKey,
+      ) ?? [];
+    this.checkArgsParametersUsage(rawQueryParametersMetadata, handlerMetadata);
+    return {
+      ...handlerMetadata,
+      type: getMethodTypeMetadata(
+        handlerMetadata,
+        this.config.nullableByDefault,
+        kind,
+      ),
+      parameters: this.buildParametersMetadata(rawQueryParametersMetadata),
+    };
   }
 
   private buildParametersMetadata(

@@ -1,7 +1,3 @@
-import RawQueryMetadata from "@src/metadata/storage/definitions/QueryMetadata";
-import { TypeMetadata } from "@src/interfaces/metadata/common";
-import ParameterMetadata from "@src/interfaces/metadata/parameters/ParameterMetadata";
+import BaseResolverHandlerMetadata from "@src/interfaces/metadata/BaseResolverHandlerMetadata";
 
-export default interface QueryMetadata extends RawQueryMetadata, TypeMetadata {
-  parameters: ParameterMetadata[];
-}
+export default interface QueryMetadata extends BaseResolverHandlerMetadata {}

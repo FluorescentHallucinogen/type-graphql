@@ -39,7 +39,6 @@ import {
 } from "@src/schema/schema-config";
 import getFirstDefinedValue from "@src/helpers/getFirstDefinedValue";
 import objectFromEntries from "@src/helpers/objectFromEntries";
-import QueryMetadata from "@src/interfaces/metadata/QueryMetadata";
 import CannotDetermineInputTypeError from "@src/errors/CannotDetermineInputTypeError";
 import RawMetadataStorage from "@src/metadata/storage/RawMetadataStorage";
 import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
@@ -47,8 +46,8 @@ import ParamKind from "@src/interfaces/ParamKind";
 import ParameterMetadata from "@src/interfaces/metadata/parameters/ParameterMetadata";
 import SpreadArgsParameterMetadata from "@src/interfaces/metadata/parameters/SpreadArgsParameterMetadata";
 import SingleArgParamterMetadata from "@src/interfaces/metadata/parameters/SingleArgParameterMetadata";
-import MutationMetadata from "@src/interfaces/metadata/MutationMetadata";
 import MissingQueryMethodError from "@src/errors/MissingQueryMethodError";
+import BaseResolverHandlerMetadata from "@src/interfaces/metadata/BaseResolverHandlerMetadata";
 
 const debug = createDebug("@typegraphql/core:SchemaGenerator");
 
@@ -93,7 +92,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
 
     return new GraphQLObjectType({
       name: "Query",
-      fields: this.getQueryFields(queries),
+      fields: this.getBaseResolverHandlerFields(queries),
     });
   }
 
@@ -110,53 +109,29 @@ export default class SchemaGenerator<TContext extends object = {}> {
 
     return new GraphQLObjectType({
       name: "Mutation",
-      fields: this.getMutationFields(mutations),
+      fields: this.getBaseResolverHandlerFields(mutations),
     });
   }
 
-  // TODO: refactor to a more generalized solution [2]
-  private getQueryFields(
-    queries: QueryMetadata[],
+  private getBaseResolverHandlerFields(
+    handlersMetadata: BaseResolverHandlerMetadata[],
   ): GraphQLFieldConfigMap<unknown, TContext, object> {
     return objectFromEntries(
-      queries.map<[string, GraphQLFieldConfig<unknown, TContext, object>]>(
-        queryMetadata => [
-          queryMetadata.schemaName,
-          {
-            type: this.getGraphQLOutputType(queryMetadata),
-            description: queryMetadata.description,
-            resolve: this.runtimeGenerator.generateQueryResolveHandler(
-              queryMetadata,
-            ),
-            args: this.getArgumentConfigFromParameters(
-              queryMetadata.parameters,
-            ),
-          },
-        ],
-      ),
-    );
-  }
-
-  // TODO: refactor to a more generalized solution [2]
-  private getMutationFields(
-    mutations: MutationMetadata[],
-  ): GraphQLFieldConfigMap<unknown, TContext, object> {
-    return objectFromEntries(
-      mutations.map<[string, GraphQLFieldConfig<unknown, TContext, object>]>(
-        mutationMetadata => [
-          mutationMetadata.schemaName,
-          {
-            type: this.getGraphQLOutputType(mutationMetadata),
-            description: mutationMetadata.description,
-            resolve: this.runtimeGenerator.generateQueryResolveHandler(
-              mutationMetadata,
-            ),
-            args: this.getArgumentConfigFromParameters(
-              mutationMetadata.parameters,
-            ),
-          },
-        ],
-      ),
+      handlersMetadata.map<
+        [string, GraphQLFieldConfig<unknown, TContext, object>]
+      >(handlerMetadata => [
+        handlerMetadata.schemaName,
+        {
+          type: this.getGraphQLOutputType(handlerMetadata),
+          description: handlerMetadata.description,
+          resolve: this.runtimeGenerator.generateQueryResolveHandler(
+            handlerMetadata,
+          ),
+          args: this.getArgumentConfigFromParameters(
+            handlerMetadata.parameters,
+          ),
+        },
+      ]),
     );
   }
 

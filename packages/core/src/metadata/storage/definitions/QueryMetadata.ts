@@ -1,16 +1,4 @@
-import {
-  TargetClassMetadata,
-  SchemaNameMetadata,
-  DescriptionMetadata,
-  PropertyMetadata,
-  NullableMetadata,
-  ExplicitTypeMetadata,
-} from "@src/metadata/storage/definitions/common";
+import RawBaseResolverHandlerMetadata from "@src/metadata/storage/definitions/BaseResolverHandlerMetadata";
 
 export default interface RawQueryMetadata
-  extends TargetClassMetadata,
-    PropertyMetadata,
-    SchemaNameMetadata,
-    NullableMetadata,
-    DescriptionMetadata,
-    ExplicitTypeMetadata {}
+  extends RawBaseResolverHandlerMetadata {}

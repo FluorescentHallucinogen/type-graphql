@@ -15,6 +15,7 @@ import RawQueryMetadata from "@src/metadata/storage/definitions/QueryMetadata";
 import RawSpreadArgsParameterMetadata from "@src/metadata/storage/definitions/parameters/SpreadArgsParameterMetadata";
 import RawSingleArgParameterMetadata from "@src/metadata/storage/definitions/parameters/SingleArgParamterMetadata";
 import RawParameterMetadata from "@src/metadata/storage/definitions/parameters/ParameterMetadata";
+import ResolverHandlerKind from "@src/interfaces/metadata/ResolverHandlerKind";
 
 const bannedReflectedTypes: Function[] = [Promise, Array, Object, Function];
 
@@ -105,7 +106,7 @@ export function getPropertyTypeMetadata(
 export function getMethodTypeMetadata(
   queryMetadata: RawQueryMetadata,
   nullableByDefault: boolean,
-  kind: "Query" | "Mutation",
+  kind: ResolverHandlerKind,
 ): TypeInfo {
   const reflectedType = getReflectedMethodType(queryMetadata);
   return getTypeMetadata(queryMetadata, nullableByDefault, reflectedType, kind);
