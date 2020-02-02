@@ -5,9 +5,9 @@ import RawMetadataStorage from "@src/metadata/storage/RawMetadataStorage";
 import ObjectTypeMetadata from "@src/interfaces/metadata/ObjectTypeMetadata";
 import FieldMetadata from "@src/interfaces/metadata/FieldMetadata";
 import {
-  getFieldTypeMetadata,
-  getQueryTypeMetadata,
-  getQueryParameterTypeMetadata,
+  getPropertyTypeMetadata,
+  getMethodTypeMetadata,
+  getMethodParameterTypeMetadata,
 } from "@src/metadata/builder/type-reflection";
 import MissingClassMetadataError from "@src/errors/MissingClassMetadataError";
 import MissingFieldsError from "@src/errors/MissingFieldsError";
@@ -75,7 +75,7 @@ export default class MetadataBuilder<TContext extends object = {}> {
       ...rawObjectTypeMetadata,
       fields: rawObjectTypeFieldsMetadata.map<FieldMetadata>(fieldMetadata => ({
         ...fieldMetadata,
-        type: getFieldTypeMetadata(
+        type: getPropertyTypeMetadata(
           fieldMetadata,
           this.config.nullableByDefault,
         ),
@@ -113,7 +113,7 @@ export default class MetadataBuilder<TContext extends object = {}> {
       ...rawInputTypeMetadata,
       fields: rawInputTypeFieldsMetadata.map<FieldMetadata>(fieldMetadata => ({
         ...fieldMetadata,
-        type: getFieldTypeMetadata(
+        type: getPropertyTypeMetadata(
           fieldMetadata,
           this.config.nullableByDefault,
         ),
@@ -160,9 +160,10 @@ export default class MetadataBuilder<TContext extends object = {}> {
         );
         return {
           ...rawQueryMetadata,
-          type: getQueryTypeMetadata(
+          type: getMethodTypeMetadata(
             rawQueryMetadata,
             this.config.nullableByDefault,
+            "Query",
           ),
           parameters: this.buildParametersMetadata(rawQueryParametersMetadata),
         };
@@ -181,9 +182,10 @@ export default class MetadataBuilder<TContext extends object = {}> {
           );
           return {
             ...rawMutationMetadata,
-            type: getQueryTypeMetadata(
+            type: getMethodTypeMetadata(
               rawMutationMetadata,
               this.config.nullableByDefault,
+              "Mutation",
             ),
             parameters: this.buildParametersMetadata(
               rawQueryParametersMetadata,
@@ -206,14 +208,14 @@ export default class MetadataBuilder<TContext extends object = {}> {
           case ParamKind.SingleArg: {
             return {
               ...rawParameterMetadata,
-              type: getQueryParameterTypeMetadata(
+              type: getMethodParameterTypeMetadata(
                 rawParameterMetadata,
                 this.config.nullableByDefault,
               ),
             };
           }
           case ParamKind.SpreadArgs: {
-            const type = getQueryParameterTypeMetadata(
+            const type = getMethodParameterTypeMetadata(
               rawParameterMetadata,
               this.config.nullableByDefault,
             );

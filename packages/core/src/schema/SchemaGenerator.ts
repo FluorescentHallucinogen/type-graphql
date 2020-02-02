@@ -48,6 +48,7 @@ import ParameterMetadata from "@src/interfaces/metadata/parameters/ParameterMeta
 import SpreadArgsParameterMetadata from "@src/interfaces/metadata/parameters/SpreadArgsParameterMetadata";
 import SingleArgParamterMetadata from "@src/interfaces/metadata/parameters/SingleArgParameterMetadata";
 import MutationMetadata from "@src/interfaces/metadata/MutationMetadata";
+import MissingQueryMethodError from "@src/errors/MissingQueryMethodError";
 
 const debug = createDebug("@typegraphql/core:SchemaGenerator");
 
@@ -87,7 +88,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
     const queries = flatten(resolversMetadata.map(it => it.queries));
 
     if (queries.length === 0) {
-      throw new Error("TODO: queries.length === 0");
+      throw new MissingQueryMethodError();
     }
 
     return new GraphQLObjectType({

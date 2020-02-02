@@ -8,7 +8,9 @@ import {
 } from "@src/metadata/storage/definitions/common";
 import TypeValue from "@src/interfaces/TypeValue";
 import { ExplicitTypeFnValue } from "@src/interfaces/ExplicitTypeFn";
-import MissingExplicitTypeError from "@src/errors/MissingExplicitTypeError";
+import MissingExplicitTypeError, {
+  MissingExplicitTypeDecoratorKind,
+} from "@src/errors/MissingExplicitTypeError";
 import RawQueryMetadata from "@src/metadata/storage/definitions/QueryMetadata";
 import RawSpreadArgsParameterMetadata from "@src/metadata/storage/definitions/parameters/SpreadArgsParameterMetadata";
 import RawSingleArgParameterMetadata from "@src/metadata/storage/definitions/parameters/SingleArgParamterMetadata";
@@ -66,6 +68,7 @@ function getTypeMetadata(
     Partial<RawParameterMetadata>,
   nullableByDefault: boolean,
   reflectedType: Function | undefined,
+  kind: MissingExplicitTypeDecoratorKind,
 ): TypeInfo {
   const { explicitType, listDepth } = unwrapExplicitType(
     metadata.explicitTypeFn?.(),
@@ -74,7 +77,7 @@ function getTypeMetadata(
     !explicitType &&
     (!reflectedType || bannedReflectedTypes.includes(reflectedType))
   ) {
-    throw new MissingExplicitTypeError(metadata, reflectedType);
+    throw new MissingExplicitTypeError(metadata, reflectedType, kind);
   }
 
   return {
@@ -86,28 +89,39 @@ function getTypeMetadata(
   };
 }
 
-export function getFieldTypeMetadata(
+export function getPropertyTypeMetadata(
   fieldMetadata: RawFieldMetadata,
   nullableByDefault: boolean,
 ): TypeInfo {
   const reflectedType = getReflectedPropertyType(fieldMetadata);
-  return getTypeMetadata(fieldMetadata, nullableByDefault, reflectedType);
+  return getTypeMetadata(
+    fieldMetadata,
+    nullableByDefault,
+    reflectedType,
+    "Field",
+  );
 }
 
-export function getQueryTypeMetadata(
+export function getMethodTypeMetadata(
   queryMetadata: RawQueryMetadata,
   nullableByDefault: boolean,
+  kind: "Query" | "Mutation",
 ): TypeInfo {
   const reflectedType = getReflectedMethodType(queryMetadata);
-  return getTypeMetadata(queryMetadata, nullableByDefault, reflectedType);
+  return getTypeMetadata(queryMetadata, nullableByDefault, reflectedType, kind);
 }
 
-export function getQueryParameterTypeMetadata(
+export function getMethodParameterTypeMetadata(
   parameterMetadata:
     | RawSingleArgParameterMetadata
     | RawSpreadArgsParameterMetadata,
   nullableByDefault: boolean,
 ): TypeInfo {
   const reflectedType = getReflectedParameterType(parameterMetadata);
-  return getTypeMetadata(parameterMetadata, nullableByDefault, reflectedType);
+  return getTypeMetadata(
+    parameterMetadata,
+    nullableByDefault,
+    reflectedType,
+    "Args",
+  );
 }

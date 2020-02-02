@@ -1,7 +1,11 @@
+import createDebug from "debug";
+
 import DefaultContainer from "@src/runtime/container/DefaultContainer";
 import { ContainerType, ContainerGetter } from "@src/interfaces/container";
 import ClassType from "@src/interfaces/ClassType";
 import ResolverData from "@src/interfaces/ResolverData";
+
+const debug = createDebug("@typegraphql/core:IoCContainer");
 
 /**
  * Container to be used by this library for inversion control.
@@ -9,12 +13,12 @@ import ResolverData from "@src/interfaces/ResolverData";
  * then the default, simple container is used instead.
  */
 export default class IoCContainer<TContext extends object = {}> {
-  private readonly container: ContainerType | undefined;
-  private readonly containerGetter: ContainerGetter<TContext> | undefined;
+  private readonly container: ContainerType<TContext>;
 
   constructor(
     iocContainerOrContainerGetter?: ContainerType | ContainerGetter<TContext>,
   ) {
+    debug("created IoCContainer instance", { iocContainerOrContainerGetter });
     if (!iocContainerOrContainerGetter) {
       this.container = new DefaultContainer();
     } else if (
@@ -23,9 +27,15 @@ export default class IoCContainer<TContext extends object = {}> {
     ) {
       this.container = iocContainerOrContainerGetter;
     } else if (typeof iocContainerOrContainerGetter === "function") {
-      this.containerGetter = iocContainerOrContainerGetter;
+      this.container = {
+        get: (someClass, resolverData) => {
+          const container = iocContainerOrContainerGetter(resolverData);
+          return container.get(someClass, resolverData);
+        },
+      };
     } else {
-      throw new Error("TODO: message");
+      // shouldn't never happen but TS claims it can be of type `ContainerType`
+      throw new Error("Invalid option provided to IoCContainer");
     }
   }
 
@@ -33,8 +43,6 @@ export default class IoCContainer<TContext extends object = {}> {
     someClass: ClassType<TInstance>,
     resolverData: ResolverData<TContext>,
   ): PromiseLike<TInstance> | TInstance {
-    // we always assign container or containerGetter in constructor
-    const container = (this.container ?? this.containerGetter?.(resolverData))!;
-    return container.get(someClass, resolverData);
+    return this.container.get(someClass, resolverData);
   }
 }

@@ -5,10 +5,10 @@ import ResolverData from "@src/interfaces/ResolverData";
  * The shape of a IoC container that is required by this library
  * to retrieve the instance of resolver class
  */
-export interface ContainerType {
+export interface ContainerType<TContext extends object = {}> {
   get<TInstance extends object = {}>(
     resolverClass: ClassType<TInstance>,
-    resolverData: ResolverData,
+    resolverData: ResolverData<TContext>,
   ): PromiseLike<TInstance> | TInstance;
 }
 

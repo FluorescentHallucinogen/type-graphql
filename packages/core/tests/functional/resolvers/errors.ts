@@ -4,8 +4,10 @@ import {
   Resolver,
   MissingClassMetadataError,
   MissingResolverMethodsError,
+  Mutation,
+  buildSchema,
+  MissingQueryMethodError,
 } from "@typegraphql/core";
-import buildTestSchema from "@tests/helpers/buildTestSchema";
 
 describe("Resolvers > errors", () => {
   it("should throw an error if an undecorated resolver class is provided to `buildSchema`", async () => {
@@ -18,7 +20,7 @@ describe("Resolvers > errors", () => {
     }
 
     try {
-      await buildTestSchema({
+      await buildSchema({
         resolvers: [SampleResolver],
       });
     } catch (err) {
@@ -39,13 +41,35 @@ describe("Resolvers > errors", () => {
     }
 
     try {
-      await buildTestSchema({
+      await buildSchema({
         resolvers: [SampleResolver],
       });
     } catch (err) {
       expect(err).toBeInstanceOf(MissingResolverMethodsError);
       expect(err.message).toMatchInlineSnapshot(
-        `"Cannot find any methods metadata for resolver class 'SampleResolver' in storage. Are the methods annotated with a '@Query()' or similar decorators?"`,
+        `"Cannot find any methods metadata for resolver class 'SampleResolver' in storage. Are the methods annotated with a '@Query()', '@Mutation()' or similar decorators?"`,
+      );
+    }
+  });
+
+  it("should throw an error if none of the resolvers contains a `@Query` method", async () => {
+    expect.assertions(2);
+    @Resolver()
+    class SampleResolver {
+      @Mutation()
+      sampleMutation(): string {
+        return "sampleMutation";
+      }
+    }
+
+    try {
+      await buildSchema({
+        resolvers: [SampleResolver],
+      });
+    } catch (err) {
+      expect(err).toBeInstanceOf(MissingQueryMethodError);
+      expect(err.message).toMatchInlineSnapshot(
+        `"Detected no method with a '@Query' decorator in provided resolvers. GraphQL specification requires that type Query must define one or more fields."`,
       );
     }
   });

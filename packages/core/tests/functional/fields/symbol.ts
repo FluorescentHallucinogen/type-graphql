@@ -55,7 +55,7 @@ describe("Fields types > symbol", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(MissingSymbolKeyDescriptionError);
       expect(error.message).toMatchInlineSnapshot(
-        `"Detected symbol key without a description. Please check the properties or methods of class 'SampleObject' and provide a proper symbol description or add a \`schemaName\` decorator option e.g. \`@Field({ schemaName: \\"nameOfSymbolField\\" })\`."`,
+        `"Detected usage of a symbol without description as a property/method key. Check the properties or methods of class 'SampleObject' and provide a proper symbol description or add a \`schemaName\` decorator option e.g. \`@Field({ schemaName: \\"nameOfSymbolField\\" })\`."`,
       );
     }
   });

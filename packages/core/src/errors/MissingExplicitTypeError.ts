@@ -4,6 +4,12 @@ import {
 } from "@src/metadata/storage/definitions/common";
 import RawParameterMetadata from "@src/metadata/storage/definitions/parameters/ParameterMetadata";
 
+export type MissingExplicitTypeDecoratorKind =
+  | "Field"
+  | "Args"
+  | "Query"
+  | "Mutation";
+
 export default class MissingExplicitTypeError extends Error {
   constructor(
     {
@@ -12,23 +18,23 @@ export default class MissingExplicitTypeError extends Error {
       parameterIndex,
     }: TargetClassMetadata & PropertyMetadata & Partial<RawParameterMetadata>,
     typeValue: Function | undefined,
+    kind: MissingExplicitTypeDecoratorKind,
   ) {
-    const isParameter = parameterIndex != null;
     let errorMessage = "";
     if (typeValue) {
       errorMessage += `Cannot transform reflected type '${typeValue.name}'. `;
     }
     errorMessage += `You need to provide an explicit type for `;
-    if (isParameter) {
-      errorMessage += `parameter #${parameterIndex!.toFixed(0)} of `;
+    if (parameterIndex != null) {
+      errorMessage += `parameter #${parameterIndex.toFixed(0)} of `;
     }
     errorMessage += `${
       targetClass.name
     }#${propertyKey.toString()} in decorator option, e.g. `;
-    if (isParameter) {
+    if (kind === "Args") {
       errorMessage += `\`@Args("myArg", { typeFn: () => [String] })\`.`;
     } else {
-      errorMessage += `\`@Field(type => MyType)\`.`;
+      errorMessage += `\`@${kind}(type => MyType)\`.`;
     }
     super(errorMessage);
 

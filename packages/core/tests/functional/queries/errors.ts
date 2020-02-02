@@ -51,7 +51,7 @@ describe("queries > return types errors", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(MissingExplicitTypeError);
       expect(err.message).toMatchInlineSnapshot(
-        `"Cannot transform reflected type 'Object'. You need to provide an explicit type for SampleResolver#sampleQuery in decorator option, e.g. \`@Field(type => MyType)\`."`,
+        `"Cannot transform reflected type 'Object'. You need to provide an explicit type for SampleResolver#sampleQuery in decorator option, e.g. \`@Query(type => MyType)\`."`,
       );
     }
   });
