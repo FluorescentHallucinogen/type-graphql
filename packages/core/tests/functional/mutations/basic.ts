@@ -2,40 +2,40 @@ import "reflect-metadata";
 import gql from "graphql-tag";
 import { execute } from "graphql";
 
-import { Resolver, Mutation } from "@typegraphql/core";
-import getPrintedMutation from "@tests/helpers/getPrintedMutation";
+import { Resolver, Mutation, Args } from "@typegraphql/core";
+import getPrintedMutationType from "@tests/helpers/getPrintedMutationType";
 import buildTestSchema from "@tests/helpers/buildTestSchema";
 
-describe("Mutations > basic", () => {
-  it("should generate proper schema signature for basic resolver with mutation", async () => {
+describe("mutations > basic", () => {
+  it("should generate proper schema signature for basic resolver with mutation with args", async () => {
     @Resolver()
     class SampleResolver {
       @Mutation()
-      sampleMutation(): string {
+      sampleMutation(@Args("sampleArg") _sampleArg: string): string {
         return "sampleMutation";
       }
     }
 
-    const printedMutationType = await getPrintedMutation(SampleResolver);
+    const printedMutationType = await getPrintedMutationType(SampleResolver);
 
     expect(printedMutationType).toMatchInlineSnapshot(`
       "type Mutation {
-        sampleMutation: String!
+        sampleMutation(sampleArg: String!): String!
       }"
     `);
   });
 
-  it("should execute resolver class method for mutation", async () => {
+  it("should execute resolver class method for mutation with args", async () => {
     @Resolver()
     class SampleResolver {
       @Mutation()
-      sampleMutation(): string {
-        return "sampleMutationReturnedValue";
+      sampleMutation(@Args("sampleArg") sampleArg: string): string {
+        return sampleArg;
       }
     }
     const document = gql`
       mutation {
-        sampleMutation
+        sampleMutation(sampleArg: "sampleArgValue")
       }
     `;
 
@@ -45,7 +45,7 @@ describe("Mutations > basic", () => {
     expect(result).toMatchInlineSnapshot(`
       Object {
         "data": Object {
-          "sampleMutation": "sampleMutationReturnedValue",
+          "sampleMutation": "sampleArgValue",
         },
       }
     `);

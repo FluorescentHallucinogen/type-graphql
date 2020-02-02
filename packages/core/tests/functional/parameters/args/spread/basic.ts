@@ -1,16 +1,10 @@
 import "reflect-metadata";
-import {
-  Resolver,
-  Query,
-  Field,
-  InputType,
-  Args,
-  buildSchema,
-} from "@typegraphql/core";
+import { Resolver, Query, Field, InputType, Args } from "@typegraphql/core";
 import { execute } from "graphql";
 import gql from "graphql-tag";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
 describe("parameters > args > spread > basic", () => {
   it("should emit args from input type class", async () => {
@@ -30,7 +24,7 @@ describe("parameters > args > spread > basic", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -59,7 +53,7 @@ describe("parameters > args > spread > basic", () => {
         testQuery(testField: "testFieldValue")
       }
     `;
-    const schema = await buildSchema({ resolvers: [TestResolver] });
+    const schema = await buildTestSchema({ resolvers: [TestResolver] });
 
     await execute({ schema, document });
 

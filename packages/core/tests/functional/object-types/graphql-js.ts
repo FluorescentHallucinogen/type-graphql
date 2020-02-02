@@ -9,7 +9,7 @@ import {
 import { ObjectType, Field } from "@typegraphql/core";
 import getPrintedType from "@tests/helpers/getPrintedType";
 
-describe("Fields types > GraphQL-JS interoperability", () => {
+describe("object types > GraphQL-JS interoperability", () => {
   it("should generate proper field signature in schema for explicit GraphQLScalarType", async () => {
     const CustomScalar = new GraphQLScalarType({
       name: "CustomScalar",

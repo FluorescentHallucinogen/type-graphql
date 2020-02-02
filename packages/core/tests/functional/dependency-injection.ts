@@ -3,7 +3,8 @@ import { execute } from "graphql";
 import gql from "graphql-tag";
 import Container from "typedi";
 
-import { Query, Resolver, buildSchema, ContainerType } from "@typegraphql/core";
+import { Query, Resolver, ContainerType } from "@typegraphql/core";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
 describe("Dependency Injection", () => {
   it("should use default container to get single instance of resolver class for each call", async () => {
@@ -21,7 +22,7 @@ describe("Dependency Injection", () => {
         sampleQuery
       }
     `;
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
 
     const firstResult = await execute({ schema, document });
     const secondResult = await execute({ schema, document });
@@ -50,7 +51,7 @@ describe("Dependency Injection", () => {
         sampleQuery
       }
     `;
-    const schema = await buildSchema({
+    const schema = await buildTestSchema({
       resolvers: [SampleResolver],
       container: Container,
     });
@@ -72,7 +73,7 @@ describe("Dependency Injection", () => {
         return "sampleQuery";
       }
     }
-    const schema = await buildSchema<TestContext>({
+    const schema = await buildTestSchema<TestContext>({
       resolvers: [SampleResolver],
       container: ({ context }) => context.container,
     });
@@ -124,7 +125,7 @@ describe("Dependency Injection", () => {
         return Promise.resolve(Container.get(cls));
       },
     };
-    const schema = await buildSchema({
+    const schema = await buildTestSchema({
       resolvers: [SampleResolver],
       container: asyncContainer,
     });

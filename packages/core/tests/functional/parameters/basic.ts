@@ -2,17 +2,11 @@ import "reflect-metadata";
 import gql from "graphql-tag";
 import { execute, GraphQLResolveInfo } from "graphql";
 
-import {
-  Resolver,
-  Query,
-  buildSchema,
-  Source,
-  Context,
-  Info,
-} from "@typegraphql/core";
+import { Resolver, Query, Source, Context, Info } from "@typegraphql/core";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
-describe("Queries > parameters > basic", () => {
-  it("should inject multiple parameters to a query handler in a correct order", async () => {
+describe("parameters > basic", () => {
+  it("should inject multiple parameters to a resolver method in a correct order", async () => {
     interface TestContext {
       pi: number;
     }
@@ -41,7 +35,7 @@ describe("Queries > parameters > basic", () => {
     const contextValue: TestContext = { pi: Math.PI };
     const rootValue = Math.PI;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document, rootValue, contextValue });
 
     expect(result.errors).toBeUndefined();
@@ -68,7 +62,7 @@ describe("Queries > parameters > basic", () => {
     expect(injectedRootValue).toMatchInlineSnapshot(`3.141592653589793`);
   });
 
-  it("should inject parameters to a proper query handler in case of multiple methods", async () => {
+  it("should inject parameters to a proper resolver method in case of multiple methods", async () => {
     @Resolver()
     class SampleResolver {
       @Query()
@@ -88,7 +82,7 @@ describe("Queries > parameters > basic", () => {
     `;
     const rootValue = Math.PI;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document, rootValue });
 
     expect(result.errors).toBeUndefined();

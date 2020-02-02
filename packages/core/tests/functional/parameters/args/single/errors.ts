@@ -6,7 +6,7 @@ import {
   MissingExplicitTypeError,
 } from "@typegraphql/core";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
 describe("parameters > args > single > errors", () => {
   it("should throw error when unknown type is provided as TS type", async () => {
@@ -19,7 +19,7 @@ describe("parameters > args > single > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(MissingExplicitTypeError);
       expect(error.message).toMatchInlineSnapshot(

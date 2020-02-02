@@ -2,49 +2,50 @@ import "reflect-metadata";
 import gql from "graphql-tag";
 import { execute } from "graphql";
 
-import { Resolver, Query, buildSchema } from "@typegraphql/core";
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import { Resolver, Query, Args } from "@typegraphql/core";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
-describe("Queries > basic", () => {
-  it("should generate proper schema signature for basic resolver with query", async () => {
+describe("queries > basic", () => {
+  it("should generate proper schema signature for basic resolver with query with args", async () => {
     @Resolver()
     class SampleResolver {
       @Query()
-      sampleQuery(): string {
+      sampleQuery(@Args("sampleArg") _sampleArg: string): string {
         return "sampleQuery";
       }
     }
 
-    const printedQueryType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
-        sampleQuery: String!
+        sampleQuery(sampleArg: String!): String!
       }"
     `);
   });
 
-  it("should execute resolver class method for basic query", async () => {
+  it("should execute resolver class method for basic query with args", async () => {
     @Resolver()
     class SampleResolver {
       @Query()
-      sampleQuery(): string {
-        return "sampleQueryReturnedValue";
+      sampleQuery(@Args("sampleArg") sampleArg: string): string {
+        return sampleArg;
       }
     }
     const document = gql`
       query {
-        sampleQuery
+        sampleQuery(sampleArg: "sampleArgValue")
       }
     `;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document });
 
     expect(result).toMatchInlineSnapshot(`
       Object {
         "data": Object {
-          "sampleQuery": "sampleQueryReturnedValue",
+          "sampleQuery": "sampleArgValue",
         },
       }
     `);
@@ -65,7 +66,7 @@ describe("Queries > basic", () => {
       }
     `;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document });
 
     expect(result).toMatchInlineSnapshot(`

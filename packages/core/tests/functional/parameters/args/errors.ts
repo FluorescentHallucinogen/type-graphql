@@ -8,7 +8,7 @@ import {
   SimultaneousArgsUsageError,
 } from "@typegraphql/core";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
 describe("parameters > args > errors", () => {
   it("should throw error when `@Args()` is used as spread and single arg at the same time", async () => {
@@ -29,7 +29,7 @@ describe("parameters > args > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(SimultaneousArgsUsageError);
       expect(error.message).toMatchInlineSnapshot(

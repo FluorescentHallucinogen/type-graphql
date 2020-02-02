@@ -1,16 +1,15 @@
 import { printType } from "graphql";
 
 import { ClassType, buildSchema, BuildSchemaOptions } from "@typegraphql/core";
-import TestResolver from "@tests/helpers/TestResolver";
 
-export default async function getPrintedMutation(
-  ResolverClass: ClassType,
+export default async function getPrintedQueryType(
+  resolverClass: ClassType,
   options?: Omit<BuildSchemaOptions, "resolvers">,
 ): Promise<string> {
   const schema = await buildSchema({
     ...options,
-    resolvers: [TestResolver, ResolverClass],
+    resolvers: [resolverClass],
   });
-  const type = schema.getMutationType()!;
+  const type = schema.getQueryType()!;
   return printType(type);
 }

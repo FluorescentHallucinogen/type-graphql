@@ -1,16 +1,10 @@
 import "reflect-metadata";
-import {
-  Resolver,
-  Query,
-  Args,
-  buildSchema,
-  InputType,
-  Field,
-} from "@typegraphql/core";
+import { Resolver, Query, Args, InputType, Field } from "@typegraphql/core";
 import gql from "graphql-tag";
 import { execute } from "graphql";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
 describe("parameters > args > single > basic", () => {
   it("should emit single inline arg", async () => {
@@ -22,7 +16,7 @@ describe("parameters > args > single > basic", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -44,7 +38,7 @@ describe("parameters > args > single > basic", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -67,7 +61,7 @@ describe("parameters > args > single > basic", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -97,7 +91,7 @@ describe("parameters > args > single > basic", () => {
         testQuery(firstArg: "firstArgValue", secondArg: "secondArgValue")
       }
     `;
-    const schema = await buildSchema({ resolvers: [TestResolver] });
+    const schema = await buildTestSchema({ resolvers: [TestResolver] });
 
     await execute({ schema, document });
 

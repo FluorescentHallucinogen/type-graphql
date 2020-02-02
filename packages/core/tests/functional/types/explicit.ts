@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { ObjectType, Field } from "@typegraphql/core";
 import getPrintedType from "@tests/helpers/getPrintedType";
 
-describe("Fields types > explicitTypeFn", () => {
+describe("types > explicitTypeFn", () => {
   it("should generate proper field signature in schema for explicit String type", async () => {
     @ObjectType()
     class SampleObject {

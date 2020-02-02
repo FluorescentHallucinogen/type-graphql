@@ -1,11 +1,11 @@
 import "reflect-metadata";
 import {
-  buildSchema,
   Query,
   Resolver,
   MissingClassMetadataError,
   MissingResolverMethodsError,
 } from "@typegraphql/core";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
 describe("Resolvers > errors", () => {
   it("should throw an error if an undecorated resolver class is provided to `buildSchema`", async () => {
@@ -18,7 +18,7 @@ describe("Resolvers > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         resolvers: [SampleResolver],
       });
     } catch (err) {
@@ -39,7 +39,7 @@ describe("Resolvers > errors", () => {
     }
 
     try {
-      await buildSchema({
+      await buildTestSchema({
         resolvers: [SampleResolver],
       });
     } catch (err) {

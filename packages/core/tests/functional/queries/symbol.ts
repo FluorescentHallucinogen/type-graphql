@@ -5,9 +5,9 @@ import {
   Resolver,
   Query,
 } from "@typegraphql/core";
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
-describe("Queries > symbol", () => {
+describe("queries > symbol", () => {
   it("should correctly generate schema query name when symbol is used as method key", async () => {
     const sampleQuerySymbol = Symbol("sampleQuery");
     @Resolver()
@@ -18,9 +18,9 @@ describe("Queries > symbol", () => {
       }
     }
 
-    const printedSampleObjectType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
-    expect(printedSampleObjectType).toMatchInlineSnapshot(`
+    expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
         sampleQuery: String!
       }"
@@ -37,9 +37,9 @@ describe("Queries > symbol", () => {
       }
     }
 
-    const printedSampleObjectType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
-    expect(printedSampleObjectType).toMatchInlineSnapshot(`
+    expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
         sampleQuery: String!
       }"
@@ -57,7 +57,7 @@ describe("Queries > symbol", () => {
           return "sampleQuerySymbol";
         }
       }
-      await getPrintedQuery(SampleResolver);
+      await getPrintedQueryType(SampleResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(MissingSymbolKeyDescriptionError);
       expect(error.message).toMatchInlineSnapshot(

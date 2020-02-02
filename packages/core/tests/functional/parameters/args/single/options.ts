@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Resolver, Query, Args } from "@typegraphql/core";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
 describe("parameters > args > single > options", () => {
   it("should emit single inline arg with description", async () => {
@@ -16,7 +16,7 @@ describe("parameters > args > single > options", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -40,7 +40,7 @@ describe("parameters > args > single > options", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -61,7 +61,7 @@ describe("parameters > args > single > options", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {

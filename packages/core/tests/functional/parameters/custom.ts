@@ -5,15 +5,15 @@ import { execute } from "graphql";
 import {
   Resolver,
   Query,
-  buildSchema,
   createParamDecorator,
   ParameterResolver,
   ResolverData,
   ParameterMetadata,
 } from "@typegraphql/core";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
-describe("Queries > parameters > custom", () => {
-  it("should inject async parameter to query handler from custom parameter resolver", async () => {
+describe("parameters > custom", () => {
+  it("should inject async parameter to resolver method from custom parameter resolver", async () => {
     function TestParam(): ParameterDecorator {
       return createParamDecorator(
         class TestParamResolver implements ParameterResolver {
@@ -37,14 +37,14 @@ describe("Queries > parameters > custom", () => {
       }
     `;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document });
 
     expect(result.errors).toBeUndefined();
     expect(result.data?.sampleQuery).toBe(Math.PI);
   });
 
-  it("should inject resolver data and parameter metadata into ParameterResolver method", async () => {
+  it("should inject resolver data and parameter metadata into ParameterResolver resolve method", async () => {
     let injectedResolverData!: ResolverData;
     let injectedMetadata!: ParameterMetadata;
     function TestParam(): ParameterDecorator {
@@ -76,7 +76,7 @@ describe("Queries > parameters > custom", () => {
     const rootValue = Math.PI;
     const contextValue = { value: Math.PI };
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document, rootValue, contextValue });
 
     expect(result.errors).toBeUndefined();

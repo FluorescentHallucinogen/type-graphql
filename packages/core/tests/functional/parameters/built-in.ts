@@ -2,17 +2,11 @@ import "reflect-metadata";
 import gql from "graphql-tag";
 import { execute, GraphQLResolveInfo } from "graphql";
 
-import {
-  Resolver,
-  Query,
-  buildSchema,
-  Source,
-  Context,
-  Info,
-} from "@typegraphql/core";
+import { Resolver, Query, Source, Context, Info } from "@typegraphql/core";
+import buildTestSchema from "@tests/helpers/buildTestSchema";
 
-describe("Queries > parameters > built-in", () => {
-  it("should inject source resolver data property to query handler when `@Source()` decorator is used", async () => {
+describe("parameters > built-in", () => {
+  it("should inject source resolver data property to resolver method when `@Source()` decorator is used", async () => {
     @Resolver()
     class SampleResolver {
       @Query()
@@ -27,7 +21,7 @@ describe("Queries > parameters > built-in", () => {
     `;
     const rootValue = Math.PI;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document, rootValue });
 
     expect(result.errors).toBeUndefined();
@@ -38,7 +32,7 @@ describe("Queries > parameters > built-in", () => {
     `);
   });
 
-  it("should inject GraphQL context to query handler when `@Context()` decorator is used", async () => {
+  it("should inject GraphQL context to resolver method when `@Context()` decorator is used", async () => {
     interface TestContext {
       pi: number;
     }
@@ -56,7 +50,7 @@ describe("Queries > parameters > built-in", () => {
     `;
     const contextValue: TestContext = { pi: Math.PI };
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document, contextValue });
 
     expect(result.errors).toBeUndefined();
@@ -67,7 +61,7 @@ describe("Queries > parameters > built-in", () => {
     `);
   });
 
-  it("should inject GraphQL info to query handler when `@Info()` decorator is used", async () => {
+  it("should inject GraphQL info to resolver method when `@Info()` decorator is used", async () => {
     let resolveInfo!: GraphQLResolveInfo;
     @Resolver()
     class SampleResolver {
@@ -83,7 +77,7 @@ describe("Queries > parameters > built-in", () => {
       }
     `;
 
-    const schema = await buildSchema({ resolvers: [SampleResolver] });
+    const schema = await buildTestSchema({ resolvers: [SampleResolver] });
     const result = await execute({ schema, document });
 
     expect(result.errors).toBeUndefined();

@@ -1,9 +1,9 @@
 import "reflect-metadata";
 
 import { Resolver, Query } from "@typegraphql/core";
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
-describe("Queries > options", () => {
+describe("queries > options", () => {
   it("should correctly generate query field name using `schemaName` decorator option", async () => {
     @Resolver()
     class SampleResolver {
@@ -13,7 +13,7 @@ describe("Queries > options", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -31,12 +31,66 @@ describe("Queries > options", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
         \\"\\"\\"sampleQuery description\\"\\"\\"
         sampleQuery: String!
+      }"
+    `);
+  });
+
+  it("should correctly generate query field nullable type using `nullable` decorator option", async () => {
+    @Resolver()
+    class SampleResolver {
+      @Query(_returns => String, { nullable: true })
+      sampleQuery(): string {
+        return "sampleQuery";
+      }
+    }
+
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
+
+    expect(printedQueryType).toMatchInlineSnapshot(`
+      "type Query {
+        sampleQuery: String
+      }"
+    `);
+  });
+
+  it("should correctly generate query field type using `typeFn` decorator option", async () => {
+    @Resolver()
+    class SampleResolver {
+      @Query({ typeFn: () => [String] })
+      sampleQuery(): string {
+        return "sampleQuery";
+      }
+    }
+
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
+
+    expect(printedQueryType).toMatchInlineSnapshot(`
+      "type Query {
+        sampleQuery: [String!]!
+      }"
+    `);
+  });
+
+  it("should correctly generate query field type using explicit type decorator option", async () => {
+    @Resolver()
+    class SampleResolver {
+      @Query(_returns => [String])
+      sampleQuery(): string {
+        return "sampleQuery";
+      }
+    }
+
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
+
+    expect(printedQueryType).toMatchInlineSnapshot(`
+      "type Query {
+        sampleQuery: [String!]!
       }"
     `);
   });

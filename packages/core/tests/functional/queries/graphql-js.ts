@@ -7,9 +7,9 @@ import {
 } from "graphql";
 
 import { Resolver, Query } from "@typegraphql/core";
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
-describe("Queries return types > GraphQL-JS interoperability", () => {
+describe("queries > return types GraphQL-JS interoperability", () => {
   it("should generate proper schema signature for query with explicit GraphQLScalarType", async () => {
     const CustomScalar = new GraphQLScalarType({
       name: "CustomScalar",
@@ -23,7 +23,7 @@ describe("Queries return types > GraphQL-JS interoperability", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {
@@ -49,7 +49,7 @@ describe("Queries return types > GraphQL-JS interoperability", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(SampleResolver);
+    const printedQueryType = await getPrintedQueryType(SampleResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {

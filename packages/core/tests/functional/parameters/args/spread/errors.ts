@@ -11,7 +11,7 @@ import {
   MultipleArgsUsageError,
 } from "@typegraphql/core";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
 describe("parameters > args > spread > errors", () => {
   it("should throw error when unknown type is provided as TS type", async () => {
@@ -24,7 +24,7 @@ describe("parameters > args > spread > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(MissingExplicitTypeError);
       expect(error.message).toMatchInlineSnapshot(
@@ -51,7 +51,7 @@ describe("parameters > args > spread > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(MultipleArgsUsageError);
       expect(error.message).toMatchInlineSnapshot(
@@ -73,7 +73,7 @@ describe("parameters > args > spread > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(MissingClassMetadataError);
       expect(error.message).toMatchInlineSnapshot(
@@ -95,7 +95,7 @@ describe("parameters > args > spread > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(WrongArgsTypeError);
       expect(error.message).toMatchInlineSnapshot(
@@ -114,7 +114,7 @@ describe("parameters > args > spread > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(WrongArgsTypeError);
       expect(error.message).toMatchInlineSnapshot(
@@ -138,7 +138,7 @@ describe("parameters > args > spread > errors", () => {
       }
     }
     try {
-      await getPrintedQuery(TestResolver);
+      await getPrintedQueryType(TestResolver);
     } catch (error) {
       expect(error).toBeInstanceOf(WrongArgsTypeError);
       expect(error.message).toMatchInlineSnapshot(

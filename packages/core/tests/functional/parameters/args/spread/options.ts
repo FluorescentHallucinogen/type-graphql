@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Resolver, Query, Field, InputType, Args } from "@typegraphql/core";
 
-import getPrintedQuery from "@tests/helpers/getPrintedQuery";
+import getPrintedQueryType from "@tests/helpers/getPrintedQueryType";
 
 describe("parameters > args > spread > options", () => {
   it("should use explicit type from `@Field` decorator if no reflected type available", async () => {
@@ -18,7 +18,7 @@ describe("parameters > args > spread > options", () => {
       }
     }
 
-    const printedQueryType = await getPrintedQuery(TestResolver);
+    const printedQueryType = await getPrintedQueryType(TestResolver);
 
     expect(printedQueryType).toMatchInlineSnapshot(`
       "type Query {

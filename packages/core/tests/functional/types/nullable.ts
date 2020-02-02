@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { ObjectType, Field } from "@typegraphql/core";
 import getPrintedType from "@tests/helpers/getPrintedType";
 
-describe("Fields types > nullable", () => {
+describe("types > nullable", () => {
   it("should correctly generate nullable field in schema using `nullable: true` decorator option", async () => {
     @ObjectType()
     class SampleObject {
