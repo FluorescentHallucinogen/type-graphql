@@ -9,5 +9,5 @@ export default interface RawSpreadArgsParameterMetadata
   extends RawBaseParameterMetadata,
     NullableMetadata,
     ExplicitTypeMetadata {
-  kind: ParamKind.SpreadArgs;
+  readonly kind: ParamKind.SpreadArgs;
 }

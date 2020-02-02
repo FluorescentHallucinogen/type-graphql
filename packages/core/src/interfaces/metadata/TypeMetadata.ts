@@ -1,12 +1,12 @@
 import TypeValue from "@src/interfaces/TypeValue";
 
 export interface TypeModifiers {
-  nullable: boolean;
+  readonly nullable: boolean;
   /** Value 0 means no list */
-  listDepth: number;
+  readonly listDepth: number;
 }
 
 export interface TypeInfo {
-  value: TypeValue;
-  modifiers: TypeModifiers;
+  readonly value: TypeValue;
+  readonly modifiers: TypeModifiers;
 }

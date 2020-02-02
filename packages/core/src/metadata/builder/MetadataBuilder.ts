@@ -35,15 +35,15 @@ import ResolverHandlerKind from "@src/interfaces/metadata/ResolverHandlerKind";
 const debug = createDebug("@typegraphql/core:MetadataBuilder");
 
 export default class MetadataBuilder<TContext extends object = {}> {
-  private readonly objectTypeMetadataByClassMap = new WeakMap<
+  protected readonly objectTypeMetadataByClassMap = new WeakMap<
     ClassType,
     ObjectTypeMetadata
   >();
-  private readonly inputTypeMetadataByClassMap = new WeakMap<
+  protected readonly inputTypeMetadataByClassMap = new WeakMap<
     ClassType,
     InputTypeMetadata
   >();
-  private readonly resolverMetadataByClassMap = new WeakMap<
+  protected readonly resolverMetadataByClassMap = new WeakMap<
     ClassType,
     ResolverMetadata
   >();

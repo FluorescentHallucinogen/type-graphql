@@ -9,5 +9,5 @@ export default interface RawObjectTypeMetadata
   extends TargetClassMetadata,
     SchemaNameMetadata,
     DescriptionMetadata {
-  implementedInterfaceClasses: ClassType[];
+  readonly implementedInterfaceClasses: readonly ClassType[];
 }

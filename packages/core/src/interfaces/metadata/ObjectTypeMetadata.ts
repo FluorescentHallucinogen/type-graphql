@@ -2,5 +2,5 @@ import RawObjectTypeMetadata from "@src/metadata/storage/definitions/ObjectTypeM
 import FieldMetadata from "@src/interfaces/metadata/FieldMetadata";
 
 export default interface ObjectTypeMetadata extends RawObjectTypeMetadata {
-  fields: FieldMetadata[];
+  readonly fields: readonly FieldMetadata[];
 }

@@ -4,7 +4,7 @@ import ClassType from "@src/interfaces/ClassType";
 export default class MetadataArrayWeakMap<
   TMetadata extends TargetClassMetadata
 > {
-  private readonly metadataMap = new WeakMap<ClassType, TMetadata[]>();
+  private readonly metadataMap = new WeakMap<ClassType, readonly TMetadata[]>();
 
   collect(metadata: TMetadata): void {
     // TODO: how to prevent duplicates?
@@ -14,7 +14,7 @@ export default class MetadataArrayWeakMap<
     ]);
   }
 
-  find(typeClass: ClassType): TMetadata[] | undefined {
+  find(typeClass: ClassType): readonly TMetadata[] | undefined {
     return this.metadataMap.get(typeClass);
   }
 }

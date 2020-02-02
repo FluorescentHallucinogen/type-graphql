@@ -47,13 +47,9 @@ export default class RuntimeGenerator<TContext extends object = {}> {
   }
 
   private getResolvedParameters(
-    parameters: ParameterMetadata[] | undefined,
+    parameters: readonly ParameterMetadata[],
     resolverData: ResolverData<TContext>,
   ): Array<PromiseLike<unknown> | unknown> {
-    if (!parameters) {
-      return [];
-    }
-
     const { container } = this.config;
     return parameters
       .slice()

@@ -3,5 +3,5 @@ import RawBaseParameterMetadata from "@src/metadata/storage/definitions/paramete
 
 export default interface RawStandardParameterMetadata
   extends RawBaseParameterMetadata {
-  kind: ParamKind.Standard;
+  readonly kind: ParamKind.Standard;
 }

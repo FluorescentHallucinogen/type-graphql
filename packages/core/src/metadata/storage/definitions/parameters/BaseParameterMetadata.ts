@@ -9,7 +9,7 @@ import ParamKind from "@src/interfaces/ParamKind";
 export default interface RawBaseParameterMetadata
   extends TargetClassMetadata,
     PropertyMetadata {
-  kind: ParamKind;
-  parameterIndex: number;
-  parameterResolverClass: ClassType<ParameterResolver>;
+  readonly kind: ParamKind;
+  readonly parameterIndex: number;
+  readonly parameterResolverClass: ClassType<ParameterResolver>;
 }

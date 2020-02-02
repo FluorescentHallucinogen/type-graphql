@@ -13,5 +13,5 @@ export default interface RawSingleArgParameterMetadata
     NullableMetadata,
     DescriptionMetadata,
     ExplicitTypeMetadata {
-  kind: ParamKind.SingleArg;
+  readonly kind: ParamKind.SingleArg;
 }

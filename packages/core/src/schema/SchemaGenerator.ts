@@ -114,7 +114,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
   }
 
   private getBaseResolverHandlerFields(
-    handlersMetadata: BaseResolverHandlerMetadata[],
+    handlersMetadata: readonly BaseResolverHandlerMetadata[],
   ): GraphQLFieldConfigMap<unknown, TContext, object> {
     return objectFromEntries(
       handlersMetadata.map<
@@ -136,7 +136,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
   }
 
   private getArgumentConfigFromParameters(
-    parameters: ParameterMetadata[],
+    parameters: readonly ParameterMetadata[],
   ): GraphQLFieldConfigArgumentMap {
     const spreadArgsMetadata = parameters.find(
       it => it.kind === ParamKind.SpreadArgs,
@@ -157,7 +157,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
   }
 
   private getArgumentConfigFromMetadata(
-    metadata: Array<
+    metadata: ReadonlyArray<
       SchemaNameMetadata &
         DescriptionMetadata &
         TypeMetadata &
@@ -254,7 +254,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
   }
 
   private getGraphQLFields(
-    fields: FieldMetadata[],
+    fields: readonly FieldMetadata[],
   ): GraphQLFieldConfigMap<unknown, unknown, unknown> {
     return objectFromEntries(
       fields.map<[string, GraphQLFieldConfig<unknown, unknown, unknown>]>(
@@ -270,7 +270,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
   }
 
   private getGraphQLInputFields(
-    fields: FieldMetadata[],
+    fields: readonly FieldMetadata[],
   ): GraphQLInputFieldConfigMap {
     return objectFromEntries(
       fields.map<[string, GraphQLInputFieldConfig]>(fieldMetadata => [

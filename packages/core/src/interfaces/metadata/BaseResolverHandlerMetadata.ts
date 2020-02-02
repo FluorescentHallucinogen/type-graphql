@@ -5,5 +5,5 @@ import RawBaseResolverHandlerMetadata from "@src/metadata/storage/definitions/Ba
 export default interface BaseResolverHandlerMetadata
   extends RawBaseResolverHandlerMetadata,
     TypeMetadata {
-  parameters: ParameterMetadata[];
+  readonly parameters: readonly ParameterMetadata[];
 }

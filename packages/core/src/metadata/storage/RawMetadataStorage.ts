@@ -14,25 +14,25 @@ import RawMutationMetadata from "@src/metadata/storage/definitions/MutationMetad
 const debug = createDebug("@typegraphql/core:MetadataStorage");
 
 export default class RawMetadataStorage {
-  protected objectTypesMetadataStorage = new MetadataWeakMap<
+  protected readonly objectTypesMetadataStorage = new MetadataWeakMap<
     RawObjectTypeMetadata
   >();
-  protected inputTypesMetadataStorage = new MetadataWeakMap<
+  protected readonly inputTypesMetadataStorage = new MetadataWeakMap<
     RawInputTypeMetadata
   >();
-  protected fieldsMetadataStorage = new MetadataArrayWeakMap<
+  protected readonly fieldsMetadataStorage = new MetadataArrayWeakMap<
     RawFieldMetadata
   >();
-  protected resolversMetadataStorage = new MetadataWeakMap<
+  protected readonly resolversMetadataStorage = new MetadataWeakMap<
     RawResolverMetadata
   >();
-  protected queriesMetadataStorage = new MetadataArrayWeakMap<
+  protected readonly queriesMetadataStorage = new MetadataArrayWeakMap<
     RawQueryMetadata
   >();
-  protected mutationsMetadataStorage = new MetadataArrayWeakMap<
+  protected readonly mutationsMetadataStorage = new MetadataArrayWeakMap<
     RawMutationMetadata
   >();
-  protected parametersMetadataStorage = new MetadataArrayWeakMap<
+  protected readonly parametersMetadataStorage = new MetadataArrayWeakMap<
     RawParameterMetadata
   >();
 
@@ -72,7 +72,9 @@ export default class RawMetadataStorage {
     debug("collecting field metadata", metadata);
     this.fieldsMetadataStorage.collect(metadata);
   }
-  findFieldsMetadata(objectClass: ClassType): RawFieldMetadata[] | undefined {
+  findFieldsMetadata(
+    objectClass: ClassType,
+  ): readonly RawFieldMetadata[] | undefined {
     return this.fieldsMetadataStorage.find(objectClass);
   }
 
@@ -92,7 +94,7 @@ export default class RawMetadataStorage {
   }
   findQueriesMetadata(
     resolverClass: ClassType,
-  ): RawQueryMetadata[] | undefined {
+  ): readonly RawQueryMetadata[] | undefined {
     return this.queriesMetadataStorage.find(resolverClass);
   }
 
@@ -102,7 +104,7 @@ export default class RawMetadataStorage {
   }
   findMutationsMetadata(
     resolverClass: ClassType,
-  ): RawMutationMetadata[] | undefined {
+  ): readonly RawMutationMetadata[] | undefined {
     return this.mutationsMetadataStorage.find(resolverClass);
   }
 
