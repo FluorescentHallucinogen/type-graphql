@@ -268,9 +268,11 @@ export default class SchemaGenerator<TContext extends object = {}> {
               this.runtimeGenerator.generateResolveHandler({
                 targetClass: fieldMetadata.resolveField.resolverClass,
                 propertyKey: fieldMetadata.resolveField.resolverPropertyKey,
-                // TODO: params support
-                parameters: [],
+                parameters: fieldMetadata.resolveField.parameters,
               }),
+            args: this.getArgumentConfigFromParameters(
+              fieldMetadata.resolveField?.parameters ?? [],
+            ),
           },
         ],
       ),

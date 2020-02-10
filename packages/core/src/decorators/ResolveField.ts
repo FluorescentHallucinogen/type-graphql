@@ -14,6 +14,7 @@ export default function ResolveField<TClassType extends ClassType>(
 ): TypedMethodDecorator {
   return (prototype, resolverPropertyKey) => {
     const resolverClass = prototype.constructor as ClassType; // FIXME: fix typed decorator signature
+    // TODO: what if typeClass is not ObjectType class?
     const typeClass = typeClassFn();
     const typePropertyKey = pickTypePropertyFn(getPropertyAccessProxy());
     RawMetadataStorage.get().collectResolveFieldMetadata({

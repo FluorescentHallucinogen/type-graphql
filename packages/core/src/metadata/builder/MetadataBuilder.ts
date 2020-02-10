@@ -31,6 +31,8 @@ import MutationMetadata from "@src/interfaces/metadata/MutationMetadata";
 import RawBaseResolverHandlerMetadata from "@src/metadata/storage/definitions/BaseResolverHandlerMetadata";
 import BaseResolverHandlerMetadata from "@src/interfaces/metadata/BaseResolverHandlerMetadata";
 import ResolverHandlerKind from "@src/interfaces/metadata/ResolverHandlerKind";
+import RawResolveFieldMetadata from "@src/metadata/storage/definitions/FieldResolverMetadata";
+import ResolveFieldMetadata from "@src/interfaces/metadata/ResolveFieldMetadata";
 
 const debug = createDebug("@typegraphql/core:MetadataBuilder");
 
@@ -78,16 +80,19 @@ export default class MetadataBuilder<TContext extends object = {}> {
 
     const objectTypeMetadata: ObjectTypeMetadata = {
       ...rawObjectTypeMetadata,
-      fields: rawObjectTypeFieldsMetadata.map<FieldMetadata>(fieldMetadata => ({
-        ...fieldMetadata,
-        type: getPropertyTypeMetadata(
-          fieldMetadata,
-          this.config.nullableByDefault,
-        ),
-        resolveField: objectTypeResolveFieldMetadata.find(
+      fields: rawObjectTypeFieldsMetadata.map<FieldMetadata>(fieldMetadata => {
+        const resolveField = objectTypeResolveFieldMetadata.find(
           it => it.propertyKey === fieldMetadata.propertyKey,
-        ),
-      })),
+        );
+        return {
+          ...fieldMetadata,
+          type: getPropertyTypeMetadata(
+            fieldMetadata,
+            this.config.nullableByDefault,
+          ),
+          resolveField: this.buildResolveFieldMetadata(resolveField),
+        };
+      }),
     };
 
     this.objectTypeMetadataByClassMap.set(objectTypeClass, objectTypeMetadata);
@@ -185,12 +190,15 @@ export default class MetadataBuilder<TContext extends object = {}> {
     handlerMetadata: RawBaseResolverHandlerMetadata,
     resolverClass: ClassType,
   ): BaseResolverHandlerMetadata {
-    const rawQueryParametersMetadata =
+    const rawResolverParametersMetadata =
       RawMetadataStorage.get().findParametersMetadata(
         resolverClass,
         handlerMetadata.propertyKey,
       ) ?? [];
-    this.checkArgsParametersUsage(rawQueryParametersMetadata, handlerMetadata);
+    this.checkArgsParametersUsage(
+      rawResolverParametersMetadata,
+      handlerMetadata,
+    );
     return {
       ...handlerMetadata,
       type: getMethodTypeMetadata(
@@ -198,7 +206,7 @@ export default class MetadataBuilder<TContext extends object = {}> {
         this.config.nullableByDefault,
         kind,
       ),
-      parameters: this.buildParametersMetadata(rawQueryParametersMetadata),
+      parameters: this.buildParametersMetadata(rawResolverParametersMetadata),
     };
   }
 
@@ -256,5 +264,26 @@ export default class MetadataBuilder<TContext extends object = {}> {
     if (spreadArgsMetadataLength && singleArgMetadataLength) {
       throw new SimultaneousArgsUsageError(metadata);
     }
+  }
+
+  private buildResolveFieldMetadata(
+    resolveFieldMetadata: RawResolveFieldMetadata | undefined,
+  ): ResolveFieldMetadata | undefined {
+    if (!resolveFieldMetadata) {
+      return;
+    }
+    const rawResolverParametersMetadata =
+      RawMetadataStorage.get().findParametersMetadata(
+        resolveFieldMetadata.resolverClass,
+        resolveFieldMetadata.resolverPropertyKey,
+      ) ?? [];
+    this.checkArgsParametersUsage(
+      rawResolverParametersMetadata,
+      resolveFieldMetadata,
+    );
+    return {
+      ...resolveFieldMetadata,
+      parameters: this.buildParametersMetadata(rawResolverParametersMetadata),
+    };
   }
 }
