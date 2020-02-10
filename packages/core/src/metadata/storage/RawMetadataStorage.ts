@@ -10,6 +10,7 @@ import MetadataWeakMap from "@src/metadata/storage/MetadataWeakMap";
 import MetadataArrayWeakMap from "@src/metadata/storage/MetadataArrayWeakMap";
 import RawInputTypeMetadata from "@src/metadata/storage/definitions/InputTypeMetadata";
 import RawMutationMetadata from "@src/metadata/storage/definitions/MutationMetadata";
+import RawResolveFieldMetadata from "@src/metadata/storage/definitions/FieldResolverMetadata";
 
 const debug = createDebug("@typegraphql/core:MetadataStorage");
 
@@ -31,6 +32,9 @@ export default class RawMetadataStorage {
   >();
   protected readonly mutationsMetadataStorage = new MetadataArrayWeakMap<
     RawMutationMetadata
+  >();
+  protected readonly resolveFieldsMetadataStorage = new MetadataArrayWeakMap<
+    RawResolveFieldMetadata
   >();
   protected readonly parametersMetadataStorage = new MetadataArrayWeakMap<
     RawParameterMetadata
@@ -106,6 +110,16 @@ export default class RawMetadataStorage {
     resolverClass: ClassType,
   ): readonly RawMutationMetadata[] | undefined {
     return this.mutationsMetadataStorage.find(resolverClass);
+  }
+
+  collectResolveFieldMetadata(metadata: RawResolveFieldMetadata): void {
+    debug("collecting resolve field metadata", metadata);
+    this.resolveFieldsMetadataStorage.collect(metadata);
+  }
+  findResolveFieldsMetadata(
+    typeClass: ClassType,
+  ): readonly RawResolveFieldMetadata[] | undefined {
+    return this.resolveFieldsMetadataStorage.find(typeClass);
   }
 
   collectParameterMetadata(metadata: RawParameterMetadata): void {

@@ -1,13 +1,17 @@
 import createDebug from "debug";
 import { GraphQLFieldResolver } from "graphql";
 
-import QueryMetadata from "@src/interfaces/metadata/QueryMetadata";
 import { BuildSchemaConfig } from "@src/schema/schema-config";
 import ResolverData from "@src/interfaces/ResolverData";
 import { DynamicResolverInstance } from "@src/runtime/types";
 import completeValue from "@src/runtime/helpers/completeValue";
 import completeValues from "@src/runtime/helpers/completeValues";
 import ParameterMetadata from "@src/interfaces/metadata/parameters/ParameterMetadata";
+import {
+  TargetClassMetadata,
+  PropertyMetadata,
+} from "@src/metadata/storage/definitions/common";
+import ResolverHandlerParametersMetadata from "@src/interfaces/metadata/ResolverHandlerParametersMetadata";
 
 const debug = createDebug("@typegraphql/core:RuntimeGenerator");
 
@@ -16,11 +20,17 @@ export default class RuntimeGenerator<TContext extends object = {}> {
     debug("created RuntimeGenerator instance", config);
   }
 
-  generateQueryResolveHandler({
+  generateResolveHandler({
     targetClass,
     propertyKey,
     parameters,
-  }: QueryMetadata): GraphQLFieldResolver<unknown, TContext, object> {
+  }: TargetClassMetadata &
+    PropertyMetadata &
+    ResolverHandlerParametersMetadata): GraphQLFieldResolver<
+    unknown,
+    TContext,
+    object
+  > {
     const { container } = this.config;
     return (source, args, context, info) => {
       const resolverData: ResolverData<TContext> = {

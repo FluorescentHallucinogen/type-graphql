@@ -124,7 +124,7 @@ export default class SchemaGenerator<TContext extends object = {}> {
         {
           type: this.getGraphQLOutputType(handlerMetadata),
           description: handlerMetadata.description,
-          resolve: this.runtimeGenerator.generateQueryResolveHandler(
+          resolve: this.runtimeGenerator.generateResolveHandler(
             handlerMetadata,
           ),
           args: this.getArgumentConfigFromParameters(
@@ -255,14 +255,22 @@ export default class SchemaGenerator<TContext extends object = {}> {
 
   private getGraphQLFields(
     fields: readonly FieldMetadata[],
-  ): GraphQLFieldConfigMap<unknown, unknown, unknown> {
+  ): GraphQLFieldConfigMap<unknown, TContext, object> {
     return objectFromEntries(
-      fields.map<[string, GraphQLFieldConfig<unknown, unknown, unknown>]>(
+      fields.map<[string, GraphQLFieldConfig<unknown, TContext, object>]>(
         fieldMetadata => [
           fieldMetadata.schemaName,
           {
             type: this.getGraphQLOutputType(fieldMetadata),
             description: fieldMetadata.description,
+            resolve:
+              fieldMetadata.resolveField &&
+              this.runtimeGenerator.generateResolveHandler({
+                targetClass: fieldMetadata.resolveField.resolverClass,
+                propertyKey: fieldMetadata.resolveField.resolverPropertyKey,
+                // TODO: params support
+                parameters: [],
+              }),
           },
         ],
       ),

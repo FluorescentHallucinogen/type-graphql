@@ -9,6 +9,7 @@ import {
   PropertyMetadata,
 } from "@src/metadata/storage/definitions/common";
 import parseStringOrSymbol from "@src/helpers/parseStringOrSymbol";
+import { PropertyAccessProxy } from "@src/interfaces/PickTypePropertyFn";
 
 export interface TypeDecoratorParams<TOptions extends ExplicitTypeable> {
   options?: Omit<TOptions, keyof ExplicitTypeable>;
@@ -46,4 +47,17 @@ export function getSchemaName(
     throw new MissingSymbolKeyDescriptionError(metadata);
   }
   return schemaName;
+}
+
+export function getPropertyAccessProxy<
+  TInstance extends object
+>(): PropertyAccessProxy<TInstance> {
+  return new Proxy<PropertyAccessProxy<TInstance>>(
+    {} as PropertyAccessProxy<TInstance>,
+    {
+      get(_target, propertyKey) {
+        return propertyKey;
+      },
+    },
+  );
 }

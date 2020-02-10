@@ -52,29 +52,30 @@ export default class MetadataBuilder<TContext extends object = {}> {
     debug("created MetadataBuilder instance", config);
   }
 
-  getObjectTypeMetadataByClass(typeClass: ClassType): ObjectTypeMetadata {
-    if (this.objectTypeMetadataByClassMap.has(typeClass)) {
-      return this.objectTypeMetadataByClassMap.get(typeClass)!;
+  getObjectTypeMetadataByClass(objectTypeClass: ClassType): ObjectTypeMetadata {
+    if (this.objectTypeMetadataByClassMap.has(objectTypeClass)) {
+      return this.objectTypeMetadataByClassMap.get(objectTypeClass)!;
     }
 
     const rawObjectTypeMetadata = RawMetadataStorage.get().findObjectTypeMetadata(
-      typeClass,
+      objectTypeClass,
     );
     if (!rawObjectTypeMetadata) {
-      throw new MissingClassMetadataError(typeClass, "ObjectType");
+      throw new MissingClassMetadataError(objectTypeClass, "ObjectType");
     }
 
     const rawObjectTypeFieldsMetadata = RawMetadataStorage.get().findFieldsMetadata(
-      typeClass,
+      objectTypeClass,
     );
     if (
       !rawObjectTypeFieldsMetadata ||
       rawObjectTypeFieldsMetadata.length === 0
     ) {
-      throw new MissingFieldsError(typeClass);
+      throw new MissingFieldsError(objectTypeClass);
     }
+    const objectTypeResolveFieldMetadata =
+      RawMetadataStorage.get().findResolveFieldsMetadata(objectTypeClass) ?? [];
 
-    // TODO: refactor to a more generalized solution [1]
     const objectTypeMetadata: ObjectTypeMetadata = {
       ...rawObjectTypeMetadata,
       fields: rawObjectTypeFieldsMetadata.map<FieldMetadata>(fieldMetadata => ({
@@ -83,10 +84,13 @@ export default class MetadataBuilder<TContext extends object = {}> {
           fieldMetadata,
           this.config.nullableByDefault,
         ),
+        resolveField: objectTypeResolveFieldMetadata.find(
+          it => it.propertyKey === fieldMetadata.propertyKey,
+        ),
       })),
     };
 
-    this.objectTypeMetadataByClassMap.set(typeClass, objectTypeMetadata);
+    this.objectTypeMetadataByClassMap.set(objectTypeClass, objectTypeMetadata);
     return objectTypeMetadata;
   }
 
@@ -112,7 +116,6 @@ export default class MetadataBuilder<TContext extends object = {}> {
       throw new MissingFieldsError(typeClass);
     }
 
-    // TODO: refactor to a more generalized solution [1]
     const inputTypeMetadata: InputTypeMetadata = {
       ...rawInputTypeMetadata,
       fields: rawInputTypeFieldsMetadata.map<FieldMetadata>(fieldMetadata => ({

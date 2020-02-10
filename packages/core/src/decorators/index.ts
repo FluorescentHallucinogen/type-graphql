@@ -15,4 +15,5 @@ export {
 } from "@src/decorators/ObjectType";
 export { default as Query, QueryOptions } from "@src/decorators/Query";
 export { default as Resolver } from "@src/decorators/Resolver";
+export { default as ResolveField } from "@src/decorators/ResolveField";
 export { default as Source } from "@src/decorators/Source";
